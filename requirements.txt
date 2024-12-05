@@ -1,0 +1,8 @@
+langchain_openai
+langchain_community
+langchain_core
+python-dotenv
+crawl4ai
+pydantic
+tenacity
+flask[async]

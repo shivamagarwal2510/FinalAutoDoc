@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Documentation Parser & Embeddings Generator</title>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <style>
+      body {
+        font-family: Arial, sans-serif;
+        max-width: 800px;
+        margin: 0 auto;
+        padding: 20px;
+      }
+      .container {
+        background: #f5f5f5;
+        padding: 20px;
+        border-radius: 8px;
+        box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+      }
+      form {
+        display: flex;
+        flex-direction: column;
+        gap: 15px;
+      }
+      input[type="text"] {
+        padding: 10px;
+        font-size: 16px;
+        border: 1px solid #ddd;
+        border-radius: 4px;
+      }
+      button {
+        padding: 12px;
+        font-size: 16px;
+        background-color: #4caf50;
+        color: white;
+        border: none;
+        border-radius: 4px;
+        cursor: pointer;
+      }
+      button:hover {
+        background-color: #45a049;
+      }
+      #status {
+        margin-top: 20px;
+        padding: 15px;
+        border-radius: 4px;
+        background-color: #fff;
+      }
+      .progress {
+        margin-top: 10px;
+        font-size: 14px;
+        color: #666;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <h1>Documentation Parser & Embeddings Generator</h1>
+      <form id="processingForm">
+        <input
+          type="text"
+          id="docs_url"
+          name="docs_url"
+          placeholder="Enter documentation URL"
+          required
+        />
+        <input
+          type="text"
+          id="github_url"
+          name="github_url"
+          placeholder="Enter GitHub repository URL"
+          required
+        />
+        <input
+          type="text"
+          id="branch_name"
+          name="branch_name"
+          placeholder="Enter branch name (default: main)"
+        />
+        <button type="submit">Start Processing</button>
+      </form>
+      <div id="status"></div>
+    </div>
+
+    <script>
+      $(document).ready(function () {
+        $("#processingForm").submit(function (e) {
+          e.preventDefault();
+          const docsUrl = $("#docs_url").val();
+          const githubUrl = $("#github_url").val();
+          
+          $("#status").html("<div class='progress'>Starting processing...</div>");
+          
+          // Single request that handles everything
+          $.ajax({
+            url: "/",
+            method: "POST",
+            data: { 
+              url: docsUrl,
+              github_url: githubUrl
+            }
+          }).then((result) => {
+            $("#status").append(
+              "<div class='progress'>" +
+              `Documentation: ${result.crawler_result}<br>` +
+              `UIthub: ${result.uithub_result}<br>` +
+              `Embeddings: ${result.embeddings_result}` +
+              "</div>"
+            );
+          }).catch((error) => {
+            $("#status").append(
+              "<div class='progress error'>" +
+              `Error: ${error.responseJSON?.error || error.statusText}` +
+              "</div>"
+            );
+          });
+        });
+      });
+    </script>
+  </body>
+</html>

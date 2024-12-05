@@ -1,0 +1,344 @@
+[
+  [
+    {
+      "title": "Overview",
+      "content": "Dualite is an AI-powered design-to-code tool that converts your Figma designs to high-quality responsive and reusable code. This documentation is designed to guide you around how you can use Dualite to transform your UI development workflow. We've covered step-by-step instructions on get started and use Dualite, best practices, use-cases and additional tips to enhance your workflow",
+      "url": "/",
+      "error": false
+    },
+    {
+      "title": "Getting Started",
+      "content": "Convert your first Figma design to code",
+      "url": "/getting-started/quickstart",
+      "error": false
+    },
+    {
+      "title": "Basics of Figma Plugin",
+      "content": "Learn the basics of our core Figma plugin",
+      "url": "/basics/editor",
+      "error": false
+    },
+    {
+      "title": "Dashboard",
+      "content": "Manage your design files and resources",
+      "url": "/dashboard/overview",
+      "error": false
+    },
+    {
+      "title": "Understanding Tagging",
+      "content": "Adding links, typing fields and more by tagging",
+      "url": "/basics/tagging",
+      "error": false
+    },
+    {
+      "title": "Designer's Guide to Dualite",
+      "content": "How to design well for quality code generation",
+      "url": "/designers-guide-to-dualite/overview",
+      "error": false
+    },
+    {
+      "title": "Dev's Guide to Dualite",
+      "content": "Integrating the Dualite generated code to prod",
+      "url": "/devs-guide-to-dualite/overview",
+      "error": false
+    },
+    {
+      "title": "Billing and Payment",
+      "content": "Upgrading, downgrading and invoice history",
+      "url": "/billing-and-payment",
+      "error": false
+    },
+    {
+      "title": "FAQs",
+      "content": "Questions and Answers",
+      "url": "/faqs",
+      "error": false
+    },
+    {
+      "title": "Popular articles and use-cases",
+      "content": "Check out use-cases achievable with Dualite",
+      "url": "/popular-use-cases",
+      "error": false
+    }
+  ],
+  [
+    {
+      "title": "Quickstart",
+      "content": "Getting started with the fastest way to turn your UI designs to code Tutorial video ## Opening Dualite inside Figma   * Inside your Figma file, go to \"Actions\" menu (Mac - Cmd + K/Windows - Ctrl+K)  \n   * Under the \u201cPlugins & widgets\u201d tab, search for Dualite in the search bar. Once it appears, select it and then click \"Run\" to open the plugin.  \nYou can also directly right-click on the Figma canvas, click on Plugins, click on Manage Plugins and open Dualite from there ## Logging In   * Dualite plugin window should open. Click on Login with Figma inside that window.  \n   * You'll be redirected to an oAuth2 screen, where you need to select \"Allow access\"  \nMake sure that the email below the \"Allow access\" button (singhvirohan01@gmail.com in the above case) is the same Figma account that you have on the Figma canvas   * You'll be redirected to Dualite's dashboard, and will end up on a screen with a Figma logo that directs you to go back to the Figma canvas  \n## Sharing Figma file link   * Once authenticated, you need to click on the Share button at the top-right of the Figma canvas. After clicking, a pop-up will open on which you need to select \"Copy link\". After copying the link, you need to close the pop-up and paste it in the typing field in the Dualite window   \n## Selecting a Figma design You can select two types of designs in Dualite, a whole page or a reusable component.  You should select a component(like a testimonial card design) to generate high-quality and reusable code components for developers, while direct Figma page to code can convert your favourite pages to pixel-perfect and responsive code(if the design is properly [auto-layouted](/designers-guide-to-dualite/figma-best-practices/3.-responsivity-and-auto-layout)) in a click for designers and marketers preferably.  The next section overs an in-depth explanation on both the modes.  Let's move forward with converting a page by selecting the main frame(i.e Ecommerce-Autolayout-Wrap)  An important thing to note is that selected design should always be the main **parent frame**. Groups, Components, masks selection are not supported [Dualite AI Semantics](/basics/markdown#example-of-dualite-ai-semantic-output) is a Pro only feature that generates human-readable classNames, props and CSS properties for a higher quality code   * After selection, you can choose the required framework(HTML, React, CSS and Tailwind) and click on Convert to Code   \nIn Safari-based browsers, plugin may freeze. We'll recommend you to use Dualite in other browsers such as Google Chrome or Firefox  You can explore [Advanced Settings](/basics/markdown) to customise your code furthermore   * Post conversion you can instantly preview the generated code, download the code as ZIP, Preview it in CodeSandbox, or convert another design. Let's download the ZIP and deploy it on Netlify  \nThe Desktop, Tablet and Phone buttons at the top-right gives you responsive layouts for each device respectively if the design is properly [autolayouted](/designers-guide-to-dualite/figma-best-practices/3.-responsivity-and-auto-layout) We provide a readme.md after downloading the ZIP of generated code.   * Finally, you can deploy it to Netlify!",
+      "url": "https://docs.dualite.dev/getting-started/quickstart",
+      "error": false
+    }
+  ],
+  [
+    {
+      "title": "Basics of Dualite Figma plugin",
+      "content": "There's so much happening under the hood that you can use to streamline your UI development workflow ![](https://docs.dualite.dev/~gitbook/image?url=https%3A%2F%2F577365990-files.gitbook.io%2F%7E%2Ffiles%2Fv0%2Fb%2Fgitbook-x-prod.appspot.com%2Fo%2Fspaces%252FZEJaHgFgDkhf3ua9fzff%252Fuploads%252FDueShnoP0uEicGomFxkS%252FPlugin%2520Overview.png%3Falt%3Dmedia%26token%3D2dfa2848-8cb6-4121-84bd-5ca95138fa98&width=768&dpr=4&quality=100&sign=bfdabc6a&sv=2) Main Selection screen ###  [](#support-button) Support button Clicking on the support button opens two options - Fill Feedback Form or Schedule a call. The first option opens up a form to help us understand your overall experience around using the product, with any specific issues that are being faced by you.  The latter lets you directly schedule a call via Calendly to immediately get your issue addressed and resolve with the help of our internal team. ###  [](#hamburger) Hamburger Opens up the option to Go to Dashboard, Documentation and Logging out. ###  [](#selected-folder) Selected folder You can create folders synced with your main dashboard to manage code conversions. We offer a default folder, but you can click on the Selected folder drop-down and create new folder(s) as and when required. [PreviousQuickstart](/getting-started/quickstart)[NextAdvanced Settings](/basics/markdown)",
+      "url": "/basics/editor",
+      "error": false
+    }
+  ],
+  [
+    {
+      "title": "Advanced Settings",
+      "content": "We have additional developer-focused settings that can be accessed on clicking the Advanced Settings button After selecting the Figma design, you can open up Advanced Settings tab ![](https://docs.dualite.dev/~gitbook/image?url=https%3A%2F%2F577365990-files.gitbook.io%2F%7E%2Ffiles%2Fv0%2Fb%2Fgitbook-x-prod.appspot.com%2Fo%2Fspaces%252FZEJaHgFgDkhf3ua9fzff%252Fuploads%252Fsoj6NZ4K8T1U7mM0iv2Z%252FAdvanced%2520Settings.png%3Falt%3Dmedia%26token%3D156ddf17-3e99-42b2-97cc-27a7d80d47b9&width=768&dpr=4&quality=100&sign=3276c61d&sv=2)",
+      "url": "https://docs.dualite.dev/basics/markdown",
+      "error": false
+    },
+    {
+      "title": "Advanced Settings Menu",
+      "content": "![](https://docs.dualite.dev/~gitbook/image?url=https%3A%2F%2F577365990-files.gitbook.io%2F%7E%2Ffiles%2Fv0%2Fb%2Fgitbook-x-prod.appspot.com%2Fo%2Fspaces%252FZEJaHgFgDkhf3ua9fzff%252Fuploads%252FUCUIPaASwiJLtiLEpkXa%252FAdvanced%2520Settings%2520Menu.png%3Falt%3Dmedia%26token%3D4dbe8d64-92bb-483d-9b6b-23ab1e198d9d&width=768&dpr=4&quality=100&sign=50fc83c7&sv=2) Post design selection after clicking on Advanced Settings button   * **Using Flex and Absolute based Styling:** If you have an auto-layouted design, you can turn the \\'Flex styling\\' option ON, which will generated CSS Flex properties in the code and make the entire design\\'s code properly responsive. By turning it OFF, you\\'ll have absolute-based styling which will have absolute properties and percentage-based CSS scaling of the end output   * **Specify Component Width** : You can define the width of the generated component that is required in the code and we\\'ll automatically resize the design to fit in the requirements. This is primarily done to resolve the issue of de designers designing on a different scale than what the developer requires in the final code output   * **Dualite Semantics:** Turning it on geenerate human-readable classNames and properties to make the code easily understandable",
+      "url": "https://docs.dualite.dev/basics/markdown",
+      "error": false
+    },
+    {
+      "title": "Example of Dualite AI Semantic Output",
+      "content": "Here\\'s an example of the kind of code output. The first image shows the design elements named as \\\"Frame 165\\\", \\\"Frame 162\\\" etc but the converted code shows proper props like \\'loginheadertitle\\' ![](https://docs.dualite.dev/~gitbook/image?url=https%3A%2F%2F577365990-files.gitbook.io%2F%7E%2Ffiles%2Fv0%2Fb%2Fgitbook-x-prod.appspot.com%2Fo%2Fspaces%252FZEJaHgFgDkhf3ua9fzff%252Fuploads%252FExzQnUMj598mpcDUnJBe%252FScreenshot%25202024-11-23%2520at%25202.39.29%25E2%2580%25AFPM.png%3Falt%3Dmedia%26token%3D365091d3-7867-4a94-a37d-31d1e100d138&width=768&dpr=4&quality=100&sign=97ec3aa8&sv=2) ![](https://docs.dualite.dev/~gitbook/image?url=https%3A%2F%2F577365990-files.gitbook.io%2F%7E%2Ffiles%2Fv0%2Fb%2Fgitbook-x-prod.appspot.com%2Fo%2Fspaces%252FZEJaHgFgDkhf3ua9fzff%252Fuploads%252Ffsb7uTKPoSmXOeNBv5zu%252FScreenshot%25202024-11-23%2520at%25202.35.14%25E2%2580%25AFPM.png%3Falt%3Dmedia%26token%3Dcc7be05e-63bf-4113-a907-db7eb9ee5ea2&width=768&dpr=4&quality=100&sign=d28a4f59&sv=2) For getting more information around component mode and how to effectively use it. Refer to this guide [here](/devs-guide-to-dualite/in-depth-guide-to-component-mode).",
+      "url": "https://docs.dualite.dev/basics/markdown",
+      "error": false
+    }
+  ],
+  [
+    {
+      "title": "Tagging",
+      "content": "Tagging is a way through you can turn your static designs(rectangles, ellipses etc.) into interactive external links, input fields, custom button actions etc. Tagging in Dualite works by renaming your Figma elements names on the left side(i.e Layers Panel) as buttons, input fields etc. Here's the reference Figma file that you can use to follow with this guide: [https://www.figma.com/design/LuLKGffrekYPnUgjTzRlrg/Dualite-Tagging-Examples?node-id=0-1&t=eYtBecALiGK88EFX-1](https://www.figma.com/design/LuLKGffrekYPnUgjTzRlrg/Dualite-Tagging-Examples?node-id=0-1&t=eYtBecALiGK88EFX-1) For tagging to be activated, all of the tagging elements\u2019 node names(shown in Layer Panel at left) should start with \u2018##\u2019 (double-hash)  If the node name is written just as ##, or is incomplete (like ##lin or ##li) then we neutralise and treat it as normal node names.",
+      "url": "/basics/tagging",
+      "error": false
+    },
+    {
+      "title": "link(##link[URL])",
+      "content": "The Figma element(Group, Text, Frame etc.) post conversion would convert it into an anchor tag with the link attached that will open in a New Tab once clicked.\n* _URL_(mandatory) - It should contain the complete URL starting with http or https.\n    * Example -<https://google.com>\nThis is how it\u2019ll appear in code output:\n```\n`<a class=\\\"a-google-com-123\\\" id=\\\" \\\" href=\\\"https://google.com\\\"> Link Text </a>`\n```\nWith React, we keep all links as a JavaScript object in the script file, which is mapped to the JSX code. This approach makes it easy to access and edit links. They\u2019re stored as key-value pairs with the classNames being the key.\n```\n`// scripts.js export const allLinks = { \\\"className\\\":\\\"the-link\\\" }`\n```\n```\n`<a className=\\\"a-google-com-123\\\" id=\\\"\\\" href={allLinks[\\\"a-google-com-123\\\"]} > Link Text </a>`\n```\nAs you can notice, with manual tagging, we generate even more semantic classNames, which helps us to make the code more readable.",
+      "url": "#link-link-url",
+      "error": false
+    },
+    {
+      "title": "Input field(##input[type])",
+      "content": "##input converts any Rectangle/Frame/Group element into an input typing field. type is optional and takes the type of \u2018Text\u2019 if nothings mentioned\nThe ##input DO NOT work for Text type, i.e, the placeholder text (e.g Enter your email). You may need to remove the placeholder text for the same. type is optional in this case and would take up text as default if you simply type in \u2018##input\u2019\n*  _type_ can include one of the following parameters\n    * text(default)\n    * email\n    * password",
+      "url": "#input-field-input-type",
+      "error": false
+    },
+    {
+      "title": "Special Case of Input Field - Checkbox and Radio Button",
+      "content": "* Checkbox\nSimilar to the core ##input concept, you need to tag the rectangle/group/Frame and not any kind of other element like Text. You can add form properties and names to input elements as per your use-case.\n* Radio",
+      "url": "#special-case-of-input-field-checkbox-and-radio-button",
+      "error": false
+    },
+    {
+      "title": "Embed(##embed[type])",
+      "content": "type is mandatory in this. If just ##embed is written without any specific type mentioned then neutralise it and treat it as normal node name type can include one any external URL, be it from YouTube, S3, or an iFrame",
+      "url": "#embed-embed-type",
+      "error": false
+    },
+    {
+      "title": "Button(##button)",
+      "content": "Creates an empty on-click event handling function that the developer can modify accordingly. You can integrate any external API call, Download-based functionality or something else entirely. Similar to the \u2018##link\u2019 tag, this also maps to an object in scripts.js for easier comprehensibility and cleaner code.\n```\n`// App.jsx <button className=\\\"button\\\" id=\\\"\\\" onClick={(e) => allFunctions[\\\"button\\\"](e)} ></button>`\n```\n```\n`// scripts.js export const allFunctions = { button: () => { console.log(\\\"function button called!\\\"); }, };`\n```\nThe developer can handle the callback and change the event type as per your need.",
+      "url": "#button-button",
+      "error": false
+    }
+  ],
+  [
+    {
+      "title": "Overview",
+      "content": "Our dashboard provides you a platform to manage and organise your conversions and access them whenever needed ![](https://docs.dualite.dev/~gitbook/image?url=https%3A%2F%2F577365990-files.gitbook.io%2F%7E%2Ffiles%2Fv0%2Fb%2Fgitbook-x-prod.appspot.com%2Fo%2Fspaces%252FZEJaHgFgDkhf3ua9fzff%252Fuploads%252Fg6tk0sHYJbCRP3skmSf5%252FStep%2520898.png%3Falt%3Dmedia%26token%3Dc06da065-bb6a-4eab-b17d-0121287ef9ae&width=768&dpr=4&quality=100&sign=92947109&sv=2) ##  [](#active-folder) Active Folder This is the active folder which is being viewed at the moment. Dualite allows you to organise and manage your conversions(each conversion shown by a Card) into various folders. ##  [](#card) Card Each card represents a design-to-code conversion, and contains the name, conversion timestamp details, the CodeSandbox preview and the associated Figma file in which the design is there. ##  [](#info) Info The \\'i\\' icon shows the number of total designs being converted by the user ##  [](#profile-icon) Profile Icon  Clicking on the Profile Icon shows you the following settings:   * My Account: Clicking here shows further details about the user and the subscription   * Install Dualite: redirects to <https://bit.ly/DUALITE>   * Documentation: refers to <https://docs.dualite.dev/>   * Report a problem: redirects you to our Github repo (<https://github.com/dualiteindia/.github/issues>) where you can put up an issue, and see solutions of existing solved issues   * Log out: You can log out of the dashboard  \nThe Help Center situated at the bottom-left directs you to a Slack channel for communication",
+      "url": "/dashboard/overview",
+      "error": false
+    }
+  ],
+  [
+    {
+      "title": "Overview",
+      "content": "How to use design well for high-quality generation from Dualite\n\nOutline\n\n* [Native Figma features supported by Dualite -> ](/designers-guide-to-dualite/native-figma-features-supported-by-dualite)\n* [Figma best practices ->](/designers-guide-to-dualite/figma-best-practices)\n    * [Responsivity and Auto Layout -> ](/designers-guide-to-dualite/figma-best-practices/3.-responsivity-and-auto-layout)\n    * [Additional tips ->](/designers-guide-to-dualite/figma-best-practices/additional-tips)",
+      "url": "/designers-guide-to-dualite/overview",
+      "error": false
+    }
+  ],
+  [
+    {
+      "title": "Native Figma Features supported by Dualite",
+      "content": "Check which native Figma features and interactions we support and which should be added via the plugin\nNative Figma features| Is it supported ?  \n---|---  \nFigma constraints| No  \nFrames and Group| Yes, but for selecting you can only select a **Frame**  \nFigma Components| Yes, but we do not support for overridden components and the component should be inside a frame  \nVariants| Only support component and variant based linear animations.  \nAuto-layout| Yes  \nPrototype and Animation| We currently support only linear-based prototypes**Triggers:**   1. On-click\n  2. While hovering - partially\n  3. After Delay **Animations:**   1. Instant\n  2. Dissolve\n  3. Smart Animate **Actions:**   1. Navigate Please note that Dualite does not support the native Figma \u201cOpen Link\u201d Action. Please use [Tagging](https://www.dualite.dev/blog/convert-static-layers-to-interactive-widgets-through-tagging) for the same",
+      "url": "/designers-guide-to-dualite/native-figma-features-supported-by-dualite",
+      "error": false
+    }
+  ],
+  [
+    {
+      "title": "Figma best practices",
+      "content": "Improve your workflow and productivity while making your developers happy in the process by using these Figma practices\n\n1. Clean and Clear Naming\nOne crucial habit for designers is to consistently name and organize all design assets. Properly labeling each layer ensures that your project remains well-structured and easy to navigate, which is especially important when passing it on to another designer or developer. Remember, these layer names will also appear in the exported code. DO NOT leave your layer panel like this with names like Ellipse 1, Rectangle 2 etc.\n\nInstead, name it something like this\n\n**Note: Dualite Semantic AI is coming soon and should make naming much easier.** Additionally, make sure to delete any layers, styles, frames and elements that are unused or hidden.\n\n2. Use of Frames\nWe recommend that any sub-group or a collection of layers should be made into a frame for optimal conversion to code Multiple objects, whether composed of vector elements or images, can be combined into groups to form a single symbol. However, it\u2019s recommended to use frames instead. Frames offer all the capabilities of groups, plus additional logic that groups lack. **Important note:** Beware of additional \u2018redundant\u2019 nested groups and frames\n\n_Frame 12, Frame 11 are redundant with no use_",
+      "url": "/designers-guide-to-dualite/figma-best-practices",
+      "error": false
+    }
+  ],
+  [
+    {
+      "title": "3. Responsivity and Auto Layout",
+      "content": "One of the core benefits of using Frames is their ability to support Figma\u2019s Auto Layout feature. Simply put, Auto Layout is a way that lets you create designs that grow to fill or shrink to fit, and reflow as their contents change. It enables the creation of dynamic frames that automatically adjust in size to preserve the established layout structure based on the content added. This is especially beneficial for elements like cards containing icons or text, as well as maintaining the layout of these cards within the main frame. \n\n## How to use Auto Layout\n\nYou can add auto layout to a frame or a selection of objects. This includes:\n\n* New or empty frames\n* Frames with existing content\n* Components and component sets\n* Groups or other selections of layers and/or objects\n\nThere are a few ways to add auto layout to a selection:\n\n* Use the keyboard shortcut \u21e7 Shift A\n* In the right panel, click next to Auto layout\n* Right-click on a frame or object and select Add auto layout\n\n* Layout direction - allows your layout to be structured in columns (horizontal) or rows (vertical)\n* Spacing - controls the spacing between your objects\n* Padding - determines the whitespace around your objects\n* Alignment - describes how the children elements are aligned within the parent frame\n* Resizing - lets you have a dynamic (hug) or fixed width(you can learn more on this [video](https://www.youtube.com/watch?v=0MwQ_se-t1o))\n\n* Distribution - determines how objects are distributed within the frame\n\n## Adding absolute positioning on Auto Layout\nYou\u2019ve set up your auto layout, but now you need to place an element outside its boundaries without disrupting the layout. This is where absolute positioning shines! Absolute positioning is a recent update to auto layout that allows you to you exclude an element from the auto layout settings without needing to remove it from the frame Once you\u2019ve added the elements to an auto layout frame, just select the ones you want to exclude from the auto layout rules and activate absolute positioning by clicking the button located in the top-right of Figma\u2019s Design panel, just beneath the alignment options.\n\nThere's a detailed video around Auto Layout by Figma that you can watch [here](https://www.youtube.com/playlist?list=PLXDU_eVOJTx55HFubfbTL3ellJjBM2QE2)",
+      "url": "/designers-guide-to-dualite/figma-best-practices/3.-responsivity-and-auto-layout",
+      "error": false
+    }
+  ],
+  [
+    {
+      "title": "Additional tips",
+      "content": "Here are some additional things to keep in mind while designing for generating a higher quality code\n\n1. Use fonts that are available on Google Fonts\nDualite is adapted to Google Fonts for the generated code. If you use a font in the Figma design that is not available on Google Fonts, it\u2019ll be replaced by the default font, i.e Times New Roman. You can check the list of fonts available on Google Fonts[ here](https://fonts.google.com/). If you still wants to use custom fonts, then follow this guide [here](https://help.figma.com/hc/en-us/articles/360039956894-Add-a-font-to-Figma-design).\n\n2. Font size mismatches\nThe font size displayed in Figma can at times be larger than the actual code output. This is an inherent Figma issue and not a Dualite issue. \n![](https://docs.dualite.dev/~gitbook/image?url=https%3A%2F%2F577365990-files.gitbook.io%2F%7E%2Ffiles%2Fv0%2Fb%2Fgitbook-x-prod.appspot.com%2Fo%2Fspaces%252FZEJaHgFgDkhf3ua9fzff%252Fuploads%252FSGuNr4ntnBk2sA6eCrO0%252FUntitled%2520%282%29.png%3Falt%3Dmedia%26token%3D6bb90a7b-db95-4e78-ab29-51982e797ddf&width=768&dpr=4&quality=100&sign=6bb1028b&sv=2) <https://forum.figma.com/t/font-size-displaying-larger-in-browser-than-in-figma/3766>\n\n3. Avoid masking, especially complex masking like Boolean\nIf there\u2019s any group or frame in the design which is made through a series of masking/clips, we\u2019ll recommend you to first export that whole group as a separate image and replace that Figma group with that image for optimal conversion to code",
+      "url": "/designers-guide-to-dualite/figma-best-practices/additional-tips",
+      "error": false
+    }
+  ],
+  [
+    {
+      "title": "Overview",
+      "content": "A deep dive on understanding Dualite's design to code processes for devs to enhance their productivity.\n\nOutline\n\n* [How Dualite translates Figma design settings to Code ->](/devs-guide-to-dualite/how-dualite-translates-figma-design-settings-into-code)\n* [Deploying on Vercel ->](/devs-guide-to-dualite/deploying-on-vercel)\n* [In-depth guide to Component Mode ->](/devs-guide-to-dualite/in-depth-guide-to-component-mode)",
+      "url": "/devs-guide-to-dualite/overview",
+      "error": false
+    }
+  ],
+  [
+    {
+      "title": "How Dualite translates Figma design settings into Code",
+      "content": "Dualite converts all your designs into code, but in some cases, fallback mechanisms are applied because not all design effects from Figma are compatible with CSS. Here\u2019s a breakdown of what Figma supports and what you can expect from Dualite\u2019s exported code when it comes to Fills, Effects, and Image Fallback. At times, your designs may not look exactly the same in CSS as they do in Figma. If this happens, you can export that group/frame into an image, export that as an image and replace the group with the exported image, ensuring they maintain their original appearance from Figma.",
+      "url": "/devs-guide-to-dualite/how-dualite-translates-figma-design-settings-into-code",
+      "error": false
+    },
+    {
+      "title": "Fills",
+      "content": "Node Type| Fill Type| Supported?| Result in code\n---|---|---|---\nFrame, Component or Instance| Linear Gradient| Yes| CSS/Tailwind\nFrame, Component or Instance| Radial Gradient| Yes| CSS/Tailwind\nFrame, Component or Instance| Image| Yes| Img tag or nested div with img as background\nText| Linear Gradient| Yes| CSS/Tailwind\nText| Radial Gradient| Yes| CSS/Tailwind\nText| Image| -| Img tag",
+      "url": "/devs-guide-to-dualite/how-dualite-translates-figma-design-settings-into-code#fills",
+      "error": false
+    },
+    {
+      "title": "Effects",
+      "content": "Effects Node Type| Effect Type| Supported| Result in Code\n---|---|---|---\nFrame, Component or Instance| Inner Shadow| Yes| CSS/Tailwind\nFrame, Component or Instance| Drop Shadow| Yes| CSS/Tailwind\nFrame, Component or Instance| Layer Blur| Yes| CSS/Tailwind\nText| Inner Shadow| -\nText| Drop Shadow| Yes| CSS/Tailwind\nText| Layer Blue| Yes| CSS/Tailwind",
+      "url": "/devs-guide-to-dualite/how-dualite-translates-figma-design-settings-into-code#effects",
+      "error": false
+    },
+    {
+      "title": "Misc",
+      "content": "Misc Node Type| Scenario| Supported| Result in Code\n---|---|---|---\nRectangle| Mixed corner radius| Yes| CSS/Tailwind\nText| Font is missing| -| Step is given in README of zip. [Read more.](/faqs/why-my-fonts-arent-showing)",
+      "url": "/devs-guide-to-dualite/how-dualite-translates-figma-design-settings-into-code#misc",
+      "error": false
+    }
+  ],
+  [
+    {
+      "title": "Deploying on Vercel",
+      "content": "We're assuming you've already setup a vite app. If you didn't then follow the following steps otherwise skip the section.\n\n## Initialize a Vite App\nCopy```\nnpm create vite@latest # Or yarn create vite\n```\nFollow the prompts to create your project. Navigate to the project directory: Copy```\ncd your-vite-project\n```\nInstall Dependencies Ensure all dependencies are installed: Copy```\nnpm install # Or yarn install\n```\nBuild the Vite App Before deploying, build the Vite app for production: Copy```\nnpm run build # Or yarn build\n```\nThis will generate a `dist/` folder, which contains the production build.\n\n## Install Vercel CLI\nIf you haven\u2019t installed the Vercel CLI, install it globally: Copy```\nnpm install -g vercel\n```\n\n## Deploy Using Vercel CLI\nTo deploy your Vite app:\nLogin to Vercel   * Run `vercel login` to authenticate with your Vercel account.  \nCopy```\nvercel login\n```\n\n### Deploy the Project\nRun `vercel` in your project directory Copy```\nvercel\n```\nThis command will guide you through the deployment setup. You will be asked to:   * Link or create a new project.   * Select the project scope (organization or personal).   * Confirm the default settings.  \nThe default settings should work for most Vite apps, but make sure the **build command** is set to: Copy```\nnpm run build\n```\nAnd the **output directory** is: Copy```\ndist\n```\n**Re-deploy or Update** : If you make updates to your project later, run: Copy```\nvercel --prod\n```\nThis will deploy your updated Vite app to the production environment.\n\n### (Optional) Configure a `vercel.json` File\nYou can also create a `vercel.json` file to define custom settings for your deployment. In the root of your project, add: Copy```\n{\n  \"builds\": [\n    {\n      \"src\":\"vite.config.js\",\n      \"use\":\"@vercel/static-build\",\n      \"config\": {\n        \"distDir\":\"dist\"\n      }\n    }\n  ],\n  \"routes\": [\n    {\n      \"src\":\"/(.*)\",\n      \"dest\":\"/\"\n    }\n  ]\n}\n```\nThis ensures that the correct build and routing settings are applied automatically.\n\n## View the Live URL\nOnce deployment is successful, Vercel will provide a live URL where your Vite app is hosted. You can visit the link to see your app in action.\nThat's it! Your Vite app is now live on Vercel.",
+      "url": "https://docs.dualite.dev/devs-guide-to-dualite/deploying-on-vercel",
+      "error": false
+    }
+  ],
+  [
+    {
+      "title": "In-depth guide to Component Mode",
+      "content": "Component mode is made with keeping a focus on developers involved in UI development. The entire intent is to modularise a design and break it down in components and use components separately as building blocks We've designed it with foundations rooting from [Atomic Design](https://bradfrost.com/blog/post/atomic-web-design/), and the idea of building blocks.",
+      "url": "/devs-guide-to-dualite/in-depth-guide-to-component-mode",
+      "error": false
+    },
+    {
+      "title": "Example",
+      "content": "The above example shows how the main eCommerce design (Frame 7184) can be converted into high-end frontend code by **selecting**(NOT removing from the design)the right frames and sections. That is why the selection should first start with Announcement Bar section selection and conversion to code, then Nav bar, Category Filter.  One important thing to note here is that post that, **we\\'ve not selected the entire grid but the individual card** since the core idea is to get as many reusable code components as possible. Since the card can be reused at multiple places with just dynamic properties changing like Title, Price etc. Next after converting just any one Card, we can reuse and build a**by stacking these generated components and building layout around them** Beyond the card, since there\\'s no reusability of Footer or Pagination Menu in this example, we\\'ve directly selected sections",
+      "url": null,
+      "error": false
+    }
+  ],
+  [
+    {
+      "title": "Popular Use-cases",
+      "content": "* [Creating a Figma Carousel and converting it to code ->](https://www.dualite.dev/blog/creating-a-figma-carousel-and-converting-it-to-code)\n* [Figma design to React -> ](https://www.dualite.dev/blog/convert-figma-design-to-react)\n* [Figma design to HTML/CSS ->](https://www.dualite.dev/blog/figma-to-html-convert-designs-to-clean-html-code)",
+      "url": "/popular-use-cases",
+      "error": false
+    }
+  ],
+  [
+    {
+      "title": "Billing and Payment",
+      "content": "## Pricing Model\nWe currently offer a Pro Monthly plan worth $12 per month, and a Pro Annual plan worth $109 per year\nFree| Pro Monthly| Pro Annual\n---|---|---\n$0| $19 per month| $189 per year\n5 design conversions| Unlimited design conversions| Unlimited design conversions\nBasic slack support| Premium weekly support of 4 hours via Calendly| Premium weekly support of 4 hours via Calendly\nNo Semantic AI support| Semantic AI support| Semantic AI support\n\n## How do I upgrade my plan?\n* **Click on Upgrade** either on the Plugin Window or on the Dashboard. You can choose the monthly or annual plan, as per your requirement.\n\n* After this step, you need to fill in your address details, and finally proceed to the final checkout page.\n\n## General FAQs\nCan I change my plans post purchase?\nWhat is your return policy?\nWhat happens if I stop paying?\nSure, Go to the Dashboard & navigate to My Account, Click on Subscription on the left side-bar, and select Manage or Cancel Plan. You\u2019ll only be billed the difference between the plans. If you cancel your subscription you will not receive an automatic refund of any portion of the fee paid for your term. You will be automatically downgraded to the free plan. You would not be able to convert any furthermore design.",
+      "url": "/billing-and-payment",
+      "error": false
+    }
+  ],
+  [
+    {
+      "title": "Subscription Invoices",
+      "content": "Subscription Invoices can be found under your billing page on your dashboard.  Click on your Profile icon at top right > Go to Subscription > and click on \"View Invoices\"",
+      "url": "/billing-and-payment/subscription-invoices",
+      "error": false
+    },
+    {
+      "title": "Image",
+      "content": "![Step 897](https://docs.dualite.dev/~gitbook/image?url=https%3A%2F%2F577365990-files.gitbook.io%2F%7E%2Ffiles%2Fv0%2Fb%2Fgitbook-x-prod.appspot.com%2Fo%2Fspaces%252FZEJaHgFgDkhf3ua9fzff%252Fuploads%252Fdy24SCtfDuNUwfVm1552%252FStep%2520897.png%3Falt%3Dmedia%26token%3D5929d8f2-9b55-4b36-a328-8465695c6d09&width=768&dpr=4&quality=100&sign=31f2f82a&sv=2)",
+      "url": null,
+      "error": false
+    }
+  ],
+  [
+    {
+      "title": "Cancelling your Pro plan",
+      "content": "Immediate downgrade happens once you cancel the Pro Plan Click on the Profile icon at top right of the Dashboard > Go to Subscription > Click on \"Cancel Plan\"  ![](https://docs.dualite.dev/~gitbook/image?url=https%3A%2F%2F577365990-files.gitbook.io%2F%7E%2Ffiles%2Fv0%2Fb%2Fgitbook-x-prod.appspot.com%2Fo%2Fspaces%252FZEJaHgFgDkhf3ua9fzff%252Fuploads%252FYRRshRRAUgt92WwszPL7%252FStep%2520897%2520%281%29.png%3Falt%3Dmedia%26token%3D1500e230-a060-41e6-942c-0180feb7acc7&width=768&dpr=4&quality=100&sign=c020560b&sv=2)",
+      "url": "/billing-and-payment/cancelling-your-pro-plan",
+      "error": false
+    }
+  ],
+  [
+    {
+      "title": "FAQs",
+      "content": "## General FAQs\n* [What can I do with Dualite? ->](/faqs/what-can-i-do-with-dualite)\n* [Feature requests -> ](/faqs/feature-requests)\n* [Errors and bugs ->](/faqs/errors-and-bugs)\n* [Dualite not working in Safari browser -> ](/faqs/safari-browser-incompatibility)\n\n## FAQs for Design\n* [Fonts -> ](https://docs.dualite.dev/designers-guide-to-dualite/figma-best-practices/additional-tips#id-1.-use-fonts-that-are-available-on-google-fonts)\n* [How to create anchor links ->](https://docs.dualite.dev/basics/tagging#link-link-url)\n* [How to create typing field -> ](https://docs.dualite.dev/basics/tagging#input-field-input-type)\n* [How to use Auto Layout -> ](https://docs.dualite.dev/designers-guide-to-dualite/figma-best-practices/3.-responsivity-and-auto-layout#how-to-use-auto-layout)\n\n## FAQs for Development\n* [Fonts not showing ->](/faqs/why-my-fonts-arent-showing)\n* [Flex is not working ->](/faqs/flex-is-not-working)\n* [Dev Mode compatibility ->](/faqs/dev-mode-compatibility)",
+      "url": "/faqs",
+      "error": false
+    }
+  ],
+  [
+    {
+      "title": "What can I do with Dualite?",
+      "content": "Dualite aims to fasten development production speed with the first-of-its-kind tool that lets you export responsive and reusable designs as well as interactive design prototypes and get them converted to React, Tailwind and HTML/CSS.\n![](https://docs.dualite.dev/~gitbook/image?url=https%3A%2F%2F577365990-files.gitbook.io%2F%7E%2Ffiles%2Fv0%2Fb%2Fgitbook-x-prod.appspot.com%2Fo%2Fspaces%252FZEJaHgFgDkhf3ua9fzff%252Fuploads%252FPuVv4O17fvgREtD6xJzt%252FScreenshot%25202024-09-07%2520at%25202.43.06%25E2%2580%25AFAM.png%3Falt%3Dmedia%26token%3Dde023fdb-0c35-4684-bb9f-68089f95ad01&width=768&dpr=4&quality=100&sign=acc4ff86&sv=2)\nYou can start reading and understand Dualite and get started right [here](/getting-started/quickstart)",
+      "url": "/faqs/what-can-i-do-with-dualite",
+      "error": false
+    }
+  ],
+  [
+    {
+      "title": "Feature Requests",
+      "content": "If you'd like to suggest a feature for future updates of Dualite, please visit our [Slack's Feature Request channel](https://join.slack.com/t/dualite-workspace/shared_invite/zt-2dmdp0df5-LlpPJ~uPL27cJw6g504NfQ). There, you can comment on or like existing requests and also propose new ones!  Your input will help us prioritize user requests and shape the future of Anima based on your needs.",
+      "url": "/faqs/feature-requests",
+      "error": false
+    }
+  ],
+  [
+    {
+      "title": "Flex is not working",
+      "content": "Please refer to the Auto Layout guide referred [here](/designers-guide-to-dualite/figma-best-practices/3.-responsivity-and-auto-layout) since there can be issues around not proper autolayouting Flex is also in Beta for us at the moment, and if there's any issue that still persists inspite of proper auto-layouting, please mail us at info@dualite.dev",
+      "url": "/faqs/flex-is-not-working",
+      "error": false
+    }
+  ],
+  [
+    {
+      "title": "Errors and Bugs",
+      "content": "Put up an issue in our Github repository\nYou can go to our Github repo (<https://github.com/dualiteindia/.github/issues>) where you can put up an issue, and see solutions of existing solved issues\n\nEmail us\nIf it is something more intricate or private, you can email us at info@dualite.dev\n\nCritical issue\nIf there's a critical issue that requires immediate help, you can directly schedule a call with our support team on Calendly [here](https://calendly.com/dualite-discussion/30min)",
+      "url": "/faqs/errors-and-bugs",
+      "error": false
+    }
+  ],
+  [
+    {
+      "title": "Why my fonts aren't showing?",
+      "content": "Your fonts isn't showing properly because the design is using fonts other then Google Fonts If you want to use a font that is not available on Google Fonts, you can add the font manually in the code. For that, you need to download the font and add it to your project. You can check out the steps to do that [here](https://www.w3schools.com/css/css3_fonts.asp).",
+      "url": "/faqs/why-my-fonts-arent-showing",
+      "error": false
+    }
+  ],
+  [
+    {
+      "title": "Dev Mode compatibility",
+      "content": "Figma Dev Mode is a robust feature aimed at simplifying the handoff between designers and developers. It allows developers to view designs in a read-only format, offering inspection tools and specialized plugins tailored for developers, like Dualite. With Dualite's plugin integrated into Figma Dev Mode, developers can seamlessly transform Figma designs into clean, responsive code in React, HTML, CSS, Tailwind, and other frameworks. This streamlines the development process while ensuring the final product stays true to the original design vision.\n\n* You simply need to click on the Dev Mode toggle and search for Dualite",
+      "url": "/faqs/dev-mode-compatibility",
+      "error": false
+    }
+  ],
+  [
+    {
+      "title": "Safari browser incompatibility",
+      "content": "Currently the plugin freezes and does not function properly with Figma in Safari browser. We're working on a fix as soon as possible. We'll suggest you to move to another browser such as Google Chrome/Firefox",
+      "url": "/faqs/safari-browser-incompatibility",
+      "error": false
+    }
+  ]
+]

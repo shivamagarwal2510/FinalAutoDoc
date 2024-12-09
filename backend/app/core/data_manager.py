@@ -9,6 +9,9 @@ from typing import Any, Dict, Generator, Tuple
 import requests
 from git import GitCommandError, Repo
 
+logging.basicConfig(level=logging.INFO)
+logger = logging.getLogger()
+logger.setLevel(logging.INFO)
 
 class DataManager:
     def __init__(self, dataset_id: str):
@@ -240,12 +243,12 @@ class GitHubRepoManager(DataManager):
     def from_args(args: Dict):
         """Creates a GitHubRepoManager from command-line arguments and clones the underlying repository."""
         repo_manager = GitHubRepoManager(
-            repo_id=args.repo_id,
-            commit_hash=args.commit_hash,
-            access_token=os.getenv("GITHUB_TOKEN"),
-            local_dir=args.local_dir,
-            inclusion_file=args.include,
-            exclusion_file=args.exclude,
+            repo_id=args["repo_id"],
+            commit_hash=args.get("commit_hash"),
+            access_token=args.get("access_token") or os.getenv("GITHUB_TOKEN"),
+            local_dir=args["local_dir"],
+            inclusion_file=args.get("inclusion_file"),
+            exclusion_file=args.get("exclusion_file"),
         )
         success = repo_manager.download()
         if not success:

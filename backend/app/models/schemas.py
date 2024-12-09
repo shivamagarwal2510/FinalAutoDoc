@@ -2,14 +2,15 @@ from pydantic import BaseModel
 from typing import List, Optional, Dict
 from datetime import datetime
 
-class Repository(BaseModel):
+class Directory(BaseModel):
     url: str
     branch: str = "main"
     type: str  # "code" or "docs"
+    folder_path: Optional[str] = None
 
 class ProjectSetup(BaseModel):
-    code_repo: Repository
-    docs_repo: Repository
+    code_repo: Directory
+    docs_repo: Directory
     
 class CodeChunk(BaseModel):
     id: str

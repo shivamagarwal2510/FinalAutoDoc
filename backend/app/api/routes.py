@@ -1,6 +1,8 @@
 from fastapi import APIRouter, HTTPException
 from backend.app.models.schemas import ProjectSetup, DocumentationUpdate
 from backend.app.core.data_manager import GitHubRepoManager
+from backend.app.core.chunker import UniversalFileChunker
+from backend.app.core.embedder import build_batch_embedder_from_flags
 import logging
 
 
@@ -18,15 +20,19 @@ async def setup_project(project: ProjectSetup):
             "commit_hash": None,
             "access_token": None,
             "inclusion_file": None,
-            "exclusion_file": None
+            "exclusion_file": None,
+            "embedding_provider": "openai",
+            "embedding_model": "text-embedding-3-large",
+            "embedding_size": 3072
         }
+
         # logging.info("initializing code repo manager")
         code_repo_manager = GitHubRepoManager.from_args(code_args)
+        code_chunker = UniversalFileChunker(max_tokens=2000)
+        code_repo_embedder = build_batch_embedder_from_flags(code_repo_manager, code_chunker, code_args)
+        repo_jobs_file = code_repo_embedder.embed_dataset(64, 100)
         print("code_repo_manager: ", code_repo_manager)
-        # if not success:
-        #     raise HTTPException(status_code=400, detail="Failed to download repository")
-            
-        # logging.info(f"Successfully initialized code_repo_manager: {code_repo_manager}")
+
 
         docs_repo_id = project.docs_repo.url
         docs_branch = project.docs_repo.branch

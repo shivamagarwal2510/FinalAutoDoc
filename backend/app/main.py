@@ -1,5 +1,11 @@
 from fastapi import FastAPI
 from backend.app.api.routes import router  # Use absolute import
+from dotenv import load_dotenv
+from backend.app.core.config import settings
+import openai
+load_dotenv()
+
+openai.api_key = settings.OPENAI_API_KEY
 
 app = FastAPI()
 

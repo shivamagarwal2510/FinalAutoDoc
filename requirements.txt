@@ -2,3 +2,13 @@ fastapi
 streamlit
 uvicorn
 GitPython
+nbformat
+semchunk
+tree_sitter
+tree_sitter_language_pack
+marqo
+tiktoken
+google-generativeai
+openai
+python-dotenv
+pydantic_settings

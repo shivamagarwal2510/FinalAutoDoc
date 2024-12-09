@@ -5,6 +5,7 @@ import os
 from abc import abstractmethod
 from functools import cached_property
 from typing import Any, Dict, Generator, Tuple
+import subprocess
 
 import requests
 from git import GitCommandError, Repo
@@ -37,6 +38,7 @@ class GitHubRepoManager(DataManager):
         local_dir: str = None,
         inclusion_file: str = None,
         exclusion_file: str = None,
+        doc_target_path: str = None
     ):
         """
         Args:
@@ -53,6 +55,7 @@ class GitHubRepoManager(DataManager):
         self.repo_id = repo_id
         self.commit_hash = commit_hash
         self.access_token = access_token
+        self.doc_target_path = doc_target_path
 
         self.local_dir = local_dir or "/tmp/"
         if not os.path.exists(self.local_dir):
@@ -108,12 +111,62 @@ class GitHubRepoManager(DataManager):
             clone_url = f"https://{self.access_token}@github.com/{self.repo_id}.git"
         else:
             clone_url = f"https://github.com/{self.repo_id}.git"
-
+        
+        print("Self.doc_target_path: ", self.doc_target_path)
         try:
-            if self.commit_hash:
+            if self.doc_target_path:
+                 # Initialize an empty repo
+                os.makedirs(self.local_path, exist_ok=True)
+                subprocess.run(["git", "init"], cwd=self.local_path, check=True)
+                
+                # Add remote
+                subprocess.run(
+                    ["git", "remote", "add", "origin", clone_url],
+                    cwd=self.local_path,
+                    check=True
+                )
+
+                # Enable sparse-checkout
+                subprocess.run(
+                    ["git", "config", "core.sparseCheckout", "true"],
+                    cwd=self.local_path,
+                    check=True
+                )
+
+                # Clean and normalize the doc_target_path
+                clean_path = self.doc_target_path.strip('/')
+                
+                # Set up sparse-checkout patterns
+                sparse_checkout_path = os.path.join(self.local_path, ".git", "info", "sparse-checkout")
+                with open(sparse_checkout_path, "w") as f:
+                    # Add the exact path and any subdirectories
+                    f.write(f"{clean_path}/*\n")
+                    # Also include the directory itself
+                    f.write(f"{clean_path}\n")
+
+                # Fetch and checkout the default branch
+                print(f"Fetching documentation from path: {clean_path}")
+                subprocess.run(
+                    ["git", "pull", "origin", self.default_branch, "--depth=1"],
+                    cwd=self.local_path,
+                    check=True,
+                    capture_output=True,
+                    text=True
+                )
+                
+                # Verify the directory exists after clone
+                doc_path = os.path.join(self.local_path, clean_path)
+                if not os.path.exists(doc_path):
+                    raise ValueError(f"Documentation path {clean_path} not found in repository")
+                
+                print(f"Successfully cloned documentation folder: {clean_path}")
+                return True
+            elif self.commit_hash:
+                print("Clonining with self.commit_hash")
                 repo = Repo.clone_from(clone_url, self.local_path)
                 repo.git.checkout(self.commit_hash)
             else:
+                print("cloining in the else block")
                 Repo.clone_from(clone_url, self.local_path, depth=1, single_branch=True)
         except GitCommandError as e:
             logging.error("Unable to clone %s from %s. Error: %s", self.repo_id, clone_url, e)
@@ -249,6 +302,7 @@ class GitHubRepoManager(DataManager):
             local_dir=args["local_dir"],
             inclusion_file=args.get("inclusion_file"),
             exclusion_file=args.get("exclusion_file"),
+            doc_target_path=args.get("doc_target_path")
         )
         success = repo_manager.download()
         if not success:

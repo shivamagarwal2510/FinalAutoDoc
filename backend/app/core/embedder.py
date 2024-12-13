@@ -66,7 +66,7 @@ class OpenAIBatchEmbedder(BatchEmbedder):
             chunk_count += len(chunks)
             batch.extend(chunks)
             pbar.update(1)
-
+            
             if len(batch) > chunks_per_batch:
                 for i in range(0, len(batch), chunks_per_batch):
                     sub_batch = batch[i : i + chunks_per_batch]
@@ -85,7 +85,9 @@ class OpenAIBatchEmbedder(BatchEmbedder):
         logging.info("Issued %d jobs for %d chunks.", len(batch_ids), chunk_count)
 
         timestamp = int(time.time())
+        print('embedder.py: embedder.py: self.local_dir: ', self.local_dir)
         metadata_file = os.path.join(self.local_dir, f"{dataset_name}_openai_batch_ids_{timestamp}.json")
+        print('embedder.py: embedder.py: metadata_file: ', metadata_file)
         with open(metadata_file, "w") as f:
             json.dump(batch_ids, f)
         logging.info("Job metadata saved at %s", metadata_file)

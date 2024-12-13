@@ -9,9 +9,9 @@ class Settings(BaseSettings):
     OPENAI_API_KEY: str
     
     # Vector DB (Pinecone)
-    # PINECONE_API_KEY: str
-    # PINECONE_ENV: str
-    # PINECONE_INDEX: str
+    PINECONE_API_KEY: str
+    PINECONE_ENV: str
+    PINECONE_INDEX: str
     
     class Config:
         env_file = ".env"

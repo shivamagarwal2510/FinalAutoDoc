@@ -208,27 +208,62 @@ class GitHubRepoManager(DataManager):
         if any(part.startswith(".") for part in file_path.split(os.path.sep)):
             return False
 
-        if not self.inclusions and not self.exclusions:
-            return True
-
-        # Filter based on file extensions, file names and directory names.
+        # Get file extension
         _, extension = os.path.splitext(file_path)
         extension = extension.lower()
-        file_name = os.path.basename(file_path)
-        dirs = os.path.dirname(file_path).split("/")
 
-        if self.inclusions:
-            return (
-                extension in self.inclusions.get("ext", [])
-                or file_name in self.inclusions.get("file", [])
-                or any(d in dirs for d in self.inclusions.get("dir", []))
-            )
-        elif self.exclusions:
-            return (
-                extension not in self.exclusions.get("ext", [])
-                and file_name not in self.exclusions.get("file", [])
-                and all(d not in dirs for d in self.exclusions.get("dir", []))
-            )
+        # List of extensions to exclude
+        excluded_extensions = {
+            # Binary and media files
+            '.png', '.jpg', '.jpeg', '.gif', '.svg', '.ico', '.pdf', 
+            '.zip', '.tar', '.gz', '.rar',
+            # Generated files
+            '.min.js', '.min.css', '.map', '.lock',
+            # Build artifacts
+            '.pyc', '.pyo', '.pyd', '.so', '.dll', '.class',
+            # Other
+            '.log', '.cache'
+        }
+
+        # Exclude files with unwanted extensions
+        if extension in excluded_extensions:
+            return False
+
+        # Exclude specific filenames
+        excluded_filenames = {
+            'package-lock.json', 'yarn.lock', 'poetry.lock',
+            '.gitignore', '.dockerignore', '.env',
+            'package.json'
+        }
+        if os.path.basename(file_path) in excluded_filenames:
+            return False
+
+        # Exclude specific directories
+        excluded_dirs = {
+            'node_modules', 'dist', 'build', 'target',
+            'venv', 'env', '.git', '__pycache__'
+        }
+        if any(d in file_path.split(os.path.sep) for d in excluded_dirs):
+            return False
+
+        # If we have explicit inclusions/exclusions, use them
+        if self.inclusions or self.exclusions:
+            file_name = os.path.basename(file_path)
+            dirs = os.path.dirname(file_path).split("/")
+
+            if self.inclusions:
+                return (
+                    extension in self.inclusions.get("ext", [])
+                    or file_name in self.inclusions.get("file", [])
+                    or any(d in dirs for d in self.inclusions.get("dir", []))
+                )
+            elif self.exclusions:
+                return (
+                    extension not in self.exclusions.get("ext", [])
+                    and file_name not in self.exclusions.get("file", [])
+                    and all(d not in dirs for d in self.exclusions.get("dir", []))
+                )
+
         return True
 
     def walk(self, get_content: bool = True) -> Generator[Tuple[Any, Dict], None, None]:

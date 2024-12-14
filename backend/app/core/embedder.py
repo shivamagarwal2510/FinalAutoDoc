@@ -61,28 +61,47 @@ class OpenAIBatchEmbedder(BatchEmbedder):
         num_files = len([x for x in self.data_manager.walk(get_content=False)])
         pbar = tqdm(total=num_files, desc="Processing files", unit="file")
 
+        # for content, metadata in self.data_manager.walk():
+        #     chunks = self.chunker.chunk(content, metadata)
+        #     chunk_count += len(chunks)
+        #     batch.extend(chunks)
+        #     pbar.update(1)
+            
+        #     if len(batch) > chunks_per_batch:
+        #         for i in range(0, len(batch), chunks_per_batch):
+        #             sub_batch = batch[i : i + chunks_per_batch]
+        #             openai_batch_id = self._issue_job_for_chunks(sub_batch, batch_id=f"{dataset_name}/{len(batch_ids)}")
+        #             batch_ids[openai_batch_id] = [chunk.metadata for chunk in sub_batch]
+        #             if max_embedding_jobs and len(batch_ids) >= max_embedding_jobs:
+        #                 logging.info("Reached the maximum number of embedding jobs. Stopping.")
+        #                 return
+        #         batch = []
+
+        # # Finally, commit the last batch.
+        # if batch:
+        #     openai_batch_id = self._issue_job_for_chunks(batch, batch_id=f"{dataset_name}/{len(batch_ids)}")
+        #     batch_ids[openai_batch_id] = [chunk.metadata for chunk in batch]
+        # First, collect all chunks
+        all_chunks = []
         for content, metadata in self.data_manager.walk():
             chunks = self.chunker.chunk(content, metadata)
+            all_chunks.extend(chunks)
             chunk_count += len(chunks)
-            batch.extend(chunks)
             pbar.update(1)
+
+        # Now process chunks in optimized batches
+        for i in range(0, len(all_chunks), chunks_per_batch):
+            batch = all_chunks[i:min(i + chunks_per_batch, len(all_chunks))]
+            if len(batch) >= chunks_per_batch * 0.75 or i + chunks_per_batch >= len(all_chunks):
+            # Only process batch if it's at least 75% full or it's the last batch
+                openai_batch_id = self._issue_job_for_chunks(batch, batch_id=f"{dataset_name}/{len(batch_ids)}")
+                batch_ids[openai_batch_id] = [chunk.metadata for chunk in batch]
             
-            if len(batch) > chunks_per_batch:
-                for i in range(0, len(batch), chunks_per_batch):
-                    sub_batch = batch[i : i + chunks_per_batch]
-                    openai_batch_id = self._issue_job_for_chunks(sub_batch, batch_id=f"{dataset_name}/{len(batch_ids)}")
-                    batch_ids[openai_batch_id] = [chunk.metadata for chunk in sub_batch]
-                    if max_embedding_jobs and len(batch_ids) >= max_embedding_jobs:
-                        logging.info("Reached the maximum number of embedding jobs. Stopping.")
-                        return
-                batch = []
-
-        # Finally, commit the last batch.
-        if batch:
-            openai_batch_id = self._issue_job_for_chunks(batch, batch_id=f"{dataset_name}/{len(batch_ids)}")
-            batch_ids[openai_batch_id] = [chunk.metadata for chunk in batch]
-
-        logging.info("Issued %d jobs for %d chunks.", len(batch_ids), chunk_count)
+                if max_embedding_jobs and len(batch_ids) >= max_embedding_jobs:
+                    logging.info("Reached the maximum number of embedding jobs. Stopping.")
+                    pbar.close()
+                    return
+            logging.info("Issued %d jobs for %d chunks.", len(batch_ids), chunk_count)
 
         timestamp = int(time.time())
         print('embedder.py: embedder.py: self.local_dir: ', self.local_dir)
@@ -107,6 +126,10 @@ class OpenAIBatchEmbedder(BatchEmbedder):
         statuses = [self.client.batches.retrieve(job_id.strip()) for job_id in job_ids]
         are_ready = all(status.status in ["completed", "failed"] for status in statuses)
         status_counts = Counter(status.status for status in statuses)
+        for status in statuses:
+            if status.status == "failed":
+                logging.error("Job %s failed with error: %s", status.id, status.errors)
+
         logging.info("Job statuses: %s", status_counts)
         return are_ready
 
@@ -200,14 +223,37 @@ class OpenAIBatchEmbedder(BatchEmbedder):
     @staticmethod
     def _chunks_to_request(chunks: List[Chunk], batch_id: str, model: str, dimensions: Optional[int] = None) -> Dict:
         """Convert a list of chunks to a batch request."""
+        # Filter out empty chunks and validate UTF-8
+        valid_chunks = []
+        for chunk in chunks:
+            if not chunk.content or not chunk.content.strip():
+                logging.warning(f"Skipping empty chunk in batch {batch_id}")
+                continue
+            
+            try:
+                # Validate UTF-8 encoding
+                chunk.content.encode('utf-8')
+                valid_chunks.append(chunk)
+            except UnicodeEncodeError:
+                logging.warning(f"Skipping chunk with invalid UTF-8 encoding in batch {batch_id}")
+                continue
+
+        if not valid_chunks:
+            raise ValueError(f"No valid chunks found in batch {batch_id}")
+
         body = {
             "model": model,
-            "input": [chunk.content for chunk in chunks],
+            "input": [chunk.content for chunk in valid_chunks],
         }
 
         # These are the only two models that support a dynamic embedding size.
         if model in ["text-embedding-3-small", "text-embedding-3-large"] and dimensions is not None:
             body["dimensions"] = dimensions
+
+        # Calculate approximate size
+        request_size = len(json.dumps(body).encode('utf-8'))
+        if request_size > 200 * 1024 * 1024:  # 200MB
+            raise ValueError(f"Batch size exceeds 200MB limit: {request_size / (1024*1024):.2f}MB")
 
         return {
             "custom_id": batch_id,

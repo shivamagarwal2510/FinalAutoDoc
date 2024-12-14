@@ -222,7 +222,7 @@ class GitHubRepoManager(DataManager):
             # Build artifacts
             '.pyc', '.pyo', '.pyd', '.so', '.dll', '.class',
             # Other
-            '.log', '.cache'
+            '.log', '.cache', ".ttf", ".mdx", ".mts", ".lockb"
         }
 
         # Exclude files with unwanted extensions
@@ -241,7 +241,8 @@ class GitHubRepoManager(DataManager):
         # Exclude specific directories
         excluded_dirs = {
             'node_modules', 'dist', 'build', 'target',
-            'venv', 'env', '.git', '__pycache__'
+            'venv', 'env', '.git', '__pycache__',
+            '__registry__'
         }
         if any(d in file_path.split(os.path.sep) for d in excluded_dirs):
             return False

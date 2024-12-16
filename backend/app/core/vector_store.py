@@ -94,8 +94,11 @@ class PineconeVectorStore(VectorStore):
             bm25_cache: The path to the BM25 encoder file. If not specified, we'll use the default BM25 (fitted on the
                 MS MARCO dataset).
         """
+        print("PineconeVectorStore: index_name: ", index_name)
         self.index_name = index_name
         self.dimension = dimension
+        pinecone_api_key = os.getenv("PINECONE_API_KEY")
+        print("PineconeVectorStore: api_key: ", pinecone_api_key)
         self.client = Pinecone()
         self.alpha = alpha
         if alpha < 1.0:
@@ -136,7 +139,9 @@ class PineconeVectorStore(VectorStore):
         return index
 
     def ensure_exists(self):
+        print("PineconeVectorStore: ensure_exists called!")
         if self.index_name not in self.client.list_indexes().names():
+            print("creating pinecone index name")
             self.client.create_index(
                 name=self.index_name,
                 dimension=self.dimension,

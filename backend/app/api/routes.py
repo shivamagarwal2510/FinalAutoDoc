@@ -6,10 +6,14 @@ from backend.app.core.embedder import build_batch_embedder_from_flags
 from backend.app.core.vector_store import build_vector_store_from_args
 import os
 import time
+import re
 
 
 router = APIRouter()
-
+def sanitize_repo_url(repo_url: str) -> str:
+    # Use regex to remove all non-alphabetic characters and convert to lowercase
+    sanitized_url = re.sub(r'[^a-zA-Z]', '', repo_url).lower()
+    return sanitized_url
 
 @router.post("/setup")
 async def setup_project(project: ProjectSetup):
@@ -34,9 +38,9 @@ async def setup_project(project: ProjectSetup):
             "embedding_model": "text-embedding-3-large",
             "embedding_size": 3072,
             "vector_store_provider":"pinecone",
-            "index_namespace": "code_"+project.code_repo.url,
+            "index_namespace": "code"+sanitize_repo_url(project.code_repo.url),
             "retrieval_alpha": 0.9,
-            "index_name": "code_"+project.code_repo.url+"_embeddings",
+            "index_name": "code"+sanitize_repo_url(project.code_repo.url)+"embeddings",
         }
 
         # logging.info("initializing code repo manager")

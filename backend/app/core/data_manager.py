@@ -207,46 +207,47 @@ class GitHubRepoManager(DataManager):
         # Exclude hidden files and directories.
         if any(part.startswith(".") for part in file_path.split(os.path.sep)):
             return False
+        
+        if(self.doc_target_path == None):
+            # Get file extension
+            _, extension = os.path.splitext(file_path)
+            extension = extension.lower()
 
-        # Get file extension
-        _, extension = os.path.splitext(file_path)
-        extension = extension.lower()
+            # List of extensions to exclude
+            excluded_extensions = {
+                # Binary and media files
+                '.png', '.jpg', '.jpeg', '.gif', '.svg', '.ico', '.pdf', 
+                '.zip', '.tar', '.gz', '.rar',
+                # Generated files
+                '.min.js', '.min.css', '.map', '.lock',
+                # Build artifacts
+                '.pyc', '.pyo', '.pyd', '.so', '.dll', '.class',
+                # Other
+                '.log', '.cache', ".ttf", ".mdx", ".mts", ".lockb",
+                '.yaml', '.md'
+            }
 
-        # List of extensions to exclude
-        excluded_extensions = {
-            # Binary and media files
-            '.png', '.jpg', '.jpeg', '.gif', '.svg', '.ico', '.pdf', 
-            '.zip', '.tar', '.gz', '.rar',
-            # Generated files
-            '.min.js', '.min.css', '.map', '.lock',
-            # Build artifacts
-            '.pyc', '.pyo', '.pyd', '.so', '.dll', '.class',
-            # Other
-            '.log', '.cache', ".ttf", ".mdx", ".mts", ".lockb",
-            '.yaml', '.md'
-        }
+            # Exclude files with unwanted extensions
+            if extension in excluded_extensions:
+                return False
 
-        # Exclude files with unwanted extensions
-        if extension in excluded_extensions:
-            return False
+            # Exclude specific filenames
+            excluded_filenames = {
+                'package-lock.json', 'yarn.lock', 'poetry.lock',
+                '.gitignore', '.dockerignore', '.env',
+                'package.json'
+            }
+            if os.path.basename(file_path) in excluded_filenames:
+                return False
 
-        # Exclude specific filenames
-        excluded_filenames = {
-            'package-lock.json', 'yarn.lock', 'poetry.lock',
-            '.gitignore', '.dockerignore', '.env',
-            'package.json'
-        }
-        if os.path.basename(file_path) in excluded_filenames:
-            return False
-
-        # Exclude specific directories
-        excluded_dirs = {
-            'node_modules', 'dist', 'build', 'target',
-            'venv', 'env', '.git', '__pycache__',
-            '__registry__'
-        }
-        if any(d in file_path.split(os.path.sep) for d in excluded_dirs):
-            return False
+            # Exclude specific directories
+            excluded_dirs = {
+                'node_modules', 'dist', 'build', 'target',
+                'venv', 'env', '.git', '__pycache__',
+                '__registry__'
+            }
+            if any(d in file_path.split(os.path.sep) for d in excluded_dirs):
+                return False
 
         # If we have explicit inclusions/exclusions, use them
         if self.inclusions or self.exclusions:

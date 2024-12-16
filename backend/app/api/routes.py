@@ -40,7 +40,7 @@ async def setup_project(project: ProjectSetup):
             "vector_store_provider":"pinecone",
             "index_namespace": "code"+sanitize_repo_url(project.code_repo.url),
             "retrieval_alpha": 0.9,
-            "index_name": "code"+sanitize_repo_url(project.code_repo.url)+"embeddings",
+            "index_name": "codeembeddings",
         }
 
         # logging.info("initializing code repo manager")

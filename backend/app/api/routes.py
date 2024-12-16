@@ -45,19 +45,19 @@ async def setup_project(project: ProjectSetup):
 
         # logging.info("initializing code repo manager")
         code_repo_manager = GitHubRepoManager.from_args(code_args)
-        # code_chunker = UniversalFileChunker(max_tokens=1000)
-        # code_repo_embedder = build_batch_embedder_from_flags(code_repo_manager, code_chunker, code_args)
-        # repo_jobs_file = code_repo_embedder.embed_dataset(20, 500)
-        # print("repo_jobs_file: ", repo_jobs_file)
-        # if code_repo_embedder is not None:
-        #     print("Waiting for Repo Embeddings to be ready...")
-        #     while not code_repo_embedder.embeddings_are_ready(repo_jobs_file):
-        #         print("Sleeping for 30 seconds...")
-        #         time.sleep(30)
-        #     print("Repo Embeddings are ready!")
-        #     repo_vector_store = build_vector_store_from_args(code_args, code_repo_manager)
-        #     repo_vector_store.ensure_exists()
-        #     repo_vector_store.upsert(code_repo_embedder.download_embeddings(repo_jobs_file), namespace=code_args["index_namespace"])
+        code_chunker = UniversalFileChunker(max_tokens=1000)
+        code_repo_embedder = build_batch_embedder_from_flags(code_repo_manager, code_chunker, code_args)
+        repo_jobs_file = code_repo_embedder.embed_dataset(20, 500)
+        print("repo_jobs_file: ", repo_jobs_file)
+        if code_repo_embedder is not None:
+            print("Waiting for Repo Embeddings to be ready...")
+            while not code_repo_embedder.embeddings_are_ready(repo_jobs_file):
+                print("Sleeping for 30 seconds...")
+                time.sleep(30)
+            print("Repo Embeddings are ready!")
+            repo_vector_store = build_vector_store_from_args(code_args, code_repo_manager)
+            repo_vector_store.ensure_exists()
+            repo_vector_store.upsert(code_repo_embedder.download_embeddings(repo_jobs_file), namespace=code_args["index_namespace"])
 
         doc_args = {
             "repo_id": project.docs_repo.url,

@@ -286,6 +286,77 @@ class IpynbFileChunker(Chunker):
         return chunks
 
 
+class DocumentationChunker(TextFileChunker):
+    """Specialized chunker for documentation files that preserves markdown structure."""
+    
+    def chunk(self, content: Any, metadata: Dict) -> List[Chunk]:
+        """Chunks documentation while preserving markdown structure."""
+        logging.info(f"Starting to chunk documentation file: {metadata.get('file_path')}")
+        file_content = content
+        file_metadata = metadata
+        
+        # Log the content length
+        logging.info(f"Content length: {len(file_content) if file_content else 0}")
+        
+        if not file_content or not file_content.strip():
+            logging.warning(f"Empty content for file: {metadata.get('file_path')}")
+            return []
+
+        # Split content by markdown headers
+        sections = []
+        current_section = []
+        
+        for line in file_content.split('\n'):
+            if line.startswith('#'):
+                if current_section:
+                    sections.append('\n'.join(current_section))
+                current_section = [line]
+            else:
+                current_section.append(line)
+        
+        if current_section:
+            sections.append('\n'.join(current_section))
+        
+        logging.info(f"Found {len(sections)} markdown sections")
+
+        # Process each section using parent's chunking logic
+        file_chunks = []
+        start_pos = 0
+        
+        for i, section in enumerate(sections):
+            if not section.strip():
+                start_pos += len(section) + 1
+                continue
+                
+            section_metadata = file_metadata.copy()
+            section_metadata['section_type'] = 'documentation'
+            
+            # Get header level and title if present
+            first_line = section.split('\n')[0]
+            if first_line.startswith('#'):
+                header_level = len(first_line.split()[0])
+                section_metadata['header_level'] = header_level
+                section_metadata['header_title'] = first_line.lstrip('#').strip()
+                logging.info(f"Processing section {i+1}/{len(sections)}: {section_metadata.get('header_title')}")
+
+            # Use parent's chunking for the section content
+            extra_tokens = self.count_tokens(metadata['file_path'] + "\n\n")
+            text_chunks = chunk_via_semchunk(section, self.max_tokens - extra_tokens, self.count_tokens)
+            
+            for text_chunk in text_chunks:
+                chunk_start = file_content.index(text_chunk, start_pos)
+                if chunk_start == -1:
+                    logging.warning(f"Couldn't find chunk in content for section: {section_metadata.get('header_title', 'unknown')}")
+                    continue
+                    
+                chunk_end = chunk_start + len(text_chunk)
+                file_chunks.append(FileChunk(file_content, section_metadata, chunk_start, chunk_end))
+                start_pos = chunk_end
+
+        logging.info(f"Created {len(file_chunks)} chunks for file {metadata.get('file_path')}")
+        return file_chunks
+
+
 class UniversalFileChunker(Chunker):
     """Chunks a file into smaller pieces, regardless of whether it's code or text."""
 
@@ -294,14 +365,22 @@ class UniversalFileChunker(Chunker):
         self.code_chunker = CodeFileChunker(max_tokens)
         self.ipynb_chunker = IpynbFileChunker(self.code_chunker)
         self.text_chunker = TextFileChunker(max_tokens)
+        self.doc_chunker = DocumentationChunker(max_tokens)
+        self.doc_extensions = {'.md', '.mdx', '.rst', '.txt', '.markdown'}
 
     def chunk(self, content: Any, metadata: Dict) -> List[Chunk]:
         if not "file_path" in metadata:
             raise ValueError("metadata must contain a 'file_path' key.")
         file_path = metadata["file_path"]
+        
+        # Get file extension
+        _, extension = os.path.splitext(file_path)
+        extension = extension.lower()
 
-        # Figure out the appropriate chunker to use.
-        if file_path.lower().endswith(".ipynb"):
+        # Choose appropriate chunker
+        if extension in self.doc_extensions:
+            chunker = self.doc_chunker
+        elif file_path.lower().endswith(".ipynb"):
             chunker = self.ipynb_chunker
         elif CodeFileChunker.is_code_file(file_path):
             chunker = self.code_chunker

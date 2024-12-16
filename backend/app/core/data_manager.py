@@ -222,7 +222,8 @@ class GitHubRepoManager(DataManager):
             # Build artifacts
             '.pyc', '.pyo', '.pyd', '.so', '.dll', '.class',
             # Other
-            '.log', '.cache', ".ttf", ".mdx", ".mts", ".lockb"
+            '.log', '.cache', ".ttf", ".mdx", ".mts", ".lockb",
+            '.yaml', '.md'
         }
 
         # Exclude files with unwanted extensions

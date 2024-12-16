@@ -69,7 +69,11 @@ async def setup_project(project: ProjectSetup):
             "doc_target_path": project.docs_repo.folder_path,
             "embedding_provider": "openai",
             "embedding_model": "text-embedding-3-large",
-            "embedding_size": 3072
+            "embedding_size": 3072,
+            "vector_store_provider":"pinecone",
+            "index_namespace": "doc"+sanitize_repo_url(project.docs_repo.url),
+            "retrieval_alpha": 0.9,
+            "index_name": "docembeddings",
         }
         print("doc_target_path: ", project.docs_repo.folder_path)
         docs_repo_manager = GitHubRepoManager.from_args(doc_args)
@@ -86,6 +90,10 @@ async def setup_project(project: ProjectSetup):
                 print("Sleeping for 30 seconds...")
                 time.sleep(30)
             print("Documentation Embeddings are ready!")
+            docs_vector_store = build_vector_store_from_args(doc_args, docs_repo_manager)
+            docs_vector_store.ensure_exists()
+            docs_vector_store.upsert(doc_repo_embedder.download_embeddings(doc_jobs_file), namespace=doc_args["index_namespace"])
+
 
         return {"message": "Project setup successful"}
     except Exception as e:

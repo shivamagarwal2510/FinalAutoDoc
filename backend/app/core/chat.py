@@ -2,8 +2,6 @@
 """
 
 import logging
-
-import configargparse
 import gradio as gr
 from dotenv import load_dotenv
 from langchain.chains import create_history_aware_retriever, create_retrieval_chain
@@ -19,7 +17,7 @@ load_dotenv()
 
 def build_rag_chain(args):
     """Builds a RAG chain via LangChain."""
-    llm = build_llm_via_langchain(args.llm_provider, args.llm_model)
+    llm = build_llm_via_langchain(args["llm_provider"], args["llm_model"])
     retriever = build_retriever_from_args(args)
 
     # Prompt to contextualize the latest query based on the chat history.
@@ -39,7 +37,7 @@ def build_rag_chain(args):
     history_aware_retriever = create_history_aware_retriever(contextualize_q_llm, retriever, contextualize_q_prompt)
 
     qa_system_prompt = (
-        f"You are my coding buddy, helping me quickly understand a GitHub repository called {args.repo_id}."
+        f"You are my coding buddy, helping me quickly understand a GitHub repository called {args["repo_id"]}."
         "Assume I am an advanced developer and answer my questions in the most succinct way possible."
         "\n\n"
         "Here are some snippets from the codebase."
@@ -60,6 +58,21 @@ def build_rag_chain(args):
 
 
 def main():
+    args = {
+        "repo_id": "shadcn-ui/ui",
+        "llm_provider": "anthropic",
+        "llm_model": "claude-3-5-sonnet-20241022",
+        "share": True,
+        "embedding_provider": "openai",
+        "embedding_model": "text-embedding-3-large",
+        "vector_store_provider": "pinecone",
+        "index_namespace": "codeshadcnuiui",
+        "index_name": "codeembeddings",
+        "retriever_top_k": 5,
+        "retrieval_alpha": 0.9,
+        "multi_query_retriever": False,
+        "embedding_size": 3072,
+    }
     rag_chain = build_rag_chain(args)
 
     def source_md(file_path: str, url: str) -> str:
@@ -103,9 +116,9 @@ def main():
 
     gr.ChatInterface(
         _predict,
-        title=args.repo_id,
+        title=args["repo_id"],
         examples=["What does this repo do?", "Give me some sample code."],
-    ).launch(share=args.share)
+    ).launch(share=args["share"])
 
 
 if __name__ == "__main__":

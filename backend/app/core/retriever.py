@@ -8,8 +8,8 @@ from backend.app.core.data_manager import DataManager
 def build_retriever_from_args(args, data_manager: Optional[DataManager] = None):
     """Builds a retriever (with optional reranking) from command-line arguments."""
 
-    if args.embedding_provider == "openai":
-        embeddings = OpenAIEmbeddings(model=args.embedding_model)
+    if args["embedding_provider"] == "openai":
+        embeddings = OpenAIEmbeddings(model=args["embedding_model"])
     # elif args.embedding_provider == "voyage":
     #     embeddings = VoyageAIEmbeddings(model=args.embedding_model)
     # elif args.embedding_provider == "gemini":
@@ -17,10 +17,10 @@ def build_retriever_from_args(args, data_manager: Optional[DataManager] = None):
     else:
         embeddings = None
     retriever = build_vector_store_from_args(args, data_manager).as_retriever(
-        top_k=args.retriever_top_k, embeddings=embeddings, namespace=args.index_namespace
+        top_k=args["retriever_top_k"], embeddings=embeddings, namespace=args["index_namespace"]
     )
 
-    if args.multi_query_retriever:
+    if args["multi_query_retriever"]:
         retriever = MultiQueryRetriever.from_llm(
             retriever=retriever, llm=build_llm_via_langchain(args.llm_provider, args.llm_model)
         )

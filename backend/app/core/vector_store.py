@@ -100,6 +100,7 @@ class PineconeVectorStore(VectorStore):
         pinecone_api_key = os.getenv("PINECONE_API_KEY")
         print("PineconeVectorStore: api_key: ", pinecone_api_key)
         self.client = Pinecone()
+        print("PineconeVectorStore: client: ", self.client)
         self.alpha = alpha
         if alpha < 1.0:
             if bm25_cache and os.path.exists(bm25_cache):
@@ -121,14 +122,25 @@ class PineconeVectorStore(VectorStore):
 
     @cached_property
     def index(self):
+        print("PineconeVectorStore: index called!")
         self.ensure_exists()
-        index = self.client.Index(self.index_name)
-
+        print("PineconeVectorStore: index: ensure_exists called!")
+        print("PineconeVectorStore: index: index_name:", self.index_name)
+        print("PineconeVectorStore: index: client:", self.client)
+        # Get the index with explicit error handling
+        try:
+            index = self.client.Index(name=self.index_name)  # Add the 'name=' parameter explicitly
+            print("PineconeVectorStore: index:", index)
+        except Exception as e:
+            print(f"Error getting index: {str(e)}")
+            raise
+        print("PineconeVectorStore: index:", index)
         # Hack around the fact that PineconeRetriever expects the content of the chunk to be in a "text" field,
         # while PineconeHybridSearchRetrieve expects it to be in a "context" field.
         original_query = index.query
 
         def patched_query(*args, **kwargs):
+            print("PineconeVectorStore: patched_query called!", args, kwargs)
             result = original_query(*args, **kwargs)
             for res in result["matches"]:
                 if TEXT_FIELD in res["metadata"]:
@@ -136,6 +148,7 @@ class PineconeVectorStore(VectorStore):
             return result
 
         index.query = patched_query
+        print("PineconeVectorStore: index: patched_query called!", index)
         return index
 
     def ensure_exists(self):
@@ -161,26 +174,27 @@ class PineconeVectorStore(VectorStore):
         self.index.upsert(vectors=pinecone_vectors, namespace=namespace)
 
     def as_retriever(self, top_k: int, embeddings: Embeddings, namespace: str):
-        bm25_retriever = (
-            BM25Retriever(
-                embeddings=embeddings,
-                sparse_encoder=self.bm25_encoder,
-                index=self.index,
-                namespace=namespace,
-                top_k=top_k,
-            )
-            if self.bm25_encoder
-            else None
-        )
-
+        print("PineconeVectorStore: as_retriever called!", self.bm25_encoder)
+        # bm25_retriever = (
+        #     BM25Retriever(
+        #         embeddings=embeddings,
+        #         sparse_encoder=self.bm25_encoder,
+        #         index=self.index,
+        #         namespace=namespace,
+        #         top_k=top_k,
+        #     )
+        #     if self.bm25_encoder
+        #     else None
+        # )
+        print("PineconeVectorStore: dense_retriever called!")
         dense_retriever = LangChainPinecone.from_existing_index(
             index_name=self.index_name, embedding=embeddings, namespace=namespace
         ).as_retriever(search_kwargs={"k": top_k})
 
-        if bm25_retriever:
-            return EnsembleRetriever(retrievers=[dense_retriever, bm25_retriever], weights=[self.alpha, 1 - self.alpha])
-        else:
-            return dense_retriever
+        # if bm25_retriever:
+        #     return EnsembleRetriever(retrievers=[dense_retriever, bm25_retriever], weights=[self.alpha, 1 - self.alpha])
+        # else:
+        return dense_retriever
 
 
 class ChromaVectorStore(VectorStore):

@@ -25,5 +25,8 @@ langchain-milvus
 langchain-openai
 langchain-qdrant
 langchain-voyageai
+langchain-ollama
+langchain-anthropic
 pinecone-text
 qdrant-client
+gradio

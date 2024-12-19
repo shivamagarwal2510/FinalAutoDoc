@@ -2,3 +2,6 @@ venv/
 .env
 extractedRepos/
 .bm25_cache/
+.gradio/
+__pycache__/
+backend/app/core/__pycache__/

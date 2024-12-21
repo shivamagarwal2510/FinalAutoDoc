@@ -1,9 +1,10 @@
 from fastapi import APIRouter, HTTPException
-from backend.app.models.schemas import ProjectSetup, DocumentationUpdate
+from backend.app.models.schemas import ProjectSetup, DocumentationUpdate, CodeChangesRequest
 from backend.app.core.data_manager import GitHubRepoManager
 from backend.app.core.chunker import UniversalFileChunker
 from backend.app.core.embedder import build_batch_embedder_from_flags
 from backend.app.core.vector_store import build_vector_store_from_args
+from backend.app.core.documentation_updater import build_documentation_update_chain
 import os
 import time
 import re
@@ -100,12 +101,51 @@ async def setup_project(project: ProjectSetup):
         print(e)
         raise HTTPException(status_code=400, detail=str(e))
 
-@router.get("/changes")
-async def get_recent_changes():
+@router.post("/changes")
+async def get_recent_changes(project: CodeChangesRequest):
     """Get recent code changes and their impact on documentation"""
     try:
-        return ""
+        print("changes route: project: ", project)
+        # Reuse the same arguments from setup
+        code_args = {
+            "repo_id": project.code_repo_id,
+            "embedding_provider": "openai",
+            "embedding_model": "text-embedding-3-large",
+            "vector_store_provider": "pinecone",
+            "index_namespace": "code"+sanitize_repo_url(project.code_repo_id),
+            "index_name": "codeembeddings",
+            "llm_provider": "anthropic",
+            "llm_model": "claude-3-5-sonnet-20241022",
+            "retrieval_alpha": 0.9,
+            "retriever_top_k": 5,
+            "multi_query_retriever": False,
+        }
+        
+        doc_args = {
+            "repo_id": project.docs_repo_id,
+            "embedding_provider": "openai",
+            "embedding_model": "text-embedding-3-large",
+            "vector_store_provider": "pinecone",
+            "index_namespace": "doc"+sanitize_repo_url(project.docs_repo_id),
+            "index_name": "docembeddings",
+            "retrieval_alpha": 0.9,
+            "retriever_top_k": 5,
+            "multi_query_retriever": False,
+        }
+
+        # Build the documentation update chain
+        update_chain = build_documentation_update_chain(code_args, doc_args)
+        print("update_chain: ", update_chain)
+        # Get recent changes from the code repository
+        code_changes = project.diffs # You'll need to implement this to get recent git changes
+        print("code_changes: ", code_changes)
+        # Process the changes and get documentation update suggestions
+        update_suggestions = await update_chain(code_changes)
+        
+        return {"suggestions": update_suggestions}
+        
     except Exception as e:
+        print(f"Error in get_recent_changes: {str(e)}")  # Add logging
         raise HTTPException(status_code=500, detail=str(e))
 
 @router.post("/update-documentation")

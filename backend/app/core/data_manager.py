@@ -222,6 +222,10 @@ class GitHubRepoManager(DataManager):
                 '.min.js', '.min.css', '.map', '.lock',
                 # Build artifacts
                 '.pyc', '.pyo', '.pyd', '.so', '.dll', '.class',
+                # Test files
+                '.spec.ts', '.spec.js', '.test.ts', '.test.js', 
+                '.spec.tsx', '.spec.jsx', '.test.tsx', '.test.jsx',
+                '.spec.py', '.test.py',
                 # Other
                 '.log', '.cache', ".ttf", ".mdx", ".mts", ".lockb",
                 '.yaml', '.md'
@@ -244,7 +248,8 @@ class GitHubRepoManager(DataManager):
             excluded_dirs = {
                 'node_modules', 'dist', 'build', 'target',
                 'venv', 'env', '.git', '__pycache__',
-                '__registry__'
+                '__registry__', 'tests', 'test', '__tests__',
+                '__test__', 'spec', '__spec__'
             }
             if any(d in file_path.split(os.path.sep) for d in excluded_dirs):
                 return False

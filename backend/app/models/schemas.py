@@ -2,6 +2,11 @@ from pydantic import BaseModel
 from typing import List, Optional, Dict
 from datetime import datetime
 
+class CodeChangesRequest(BaseModel):
+    code_repo_id: str
+    docs_repo_id: str
+    diffs: str
+
 class Directory(BaseModel):
     url: str
     branch: str = "main"

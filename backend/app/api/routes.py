@@ -46,6 +46,7 @@ async def setup_project(project: ProjectSetup):
 
         # logging.info("initializing code repo manager")
         code_repo_manager = GitHubRepoManager.from_args(code_args)
+        print("code_repo_manager: ", code_repo_manager)
         code_chunker = UniversalFileChunker(max_tokens=1000)
         code_repo_embedder = build_batch_embedder_from_flags(code_repo_manager, code_chunker, code_args)
         repo_jobs_file = code_repo_embedder.embed_dataset(20, 500)

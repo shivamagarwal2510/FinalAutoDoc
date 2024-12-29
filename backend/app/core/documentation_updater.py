@@ -107,6 +107,56 @@ def build_documentation_update_chain(code_args, doc_args):
         prompt=update_prompt,
         document_variable_name="docs_context"  # This is for the documentation context
     )
+
+    xml_update_prompt = ChatPromptTemplate.from_messages([
+        ("system", """You are an expert technical documentation writer. Your task is to convert documentation update suggestions into a structured XML format.
+
+        CONTEXT INFORMATION:
+        Existing Documentation:
+        {context}
+
+        RULES FOR XML CONVERSION:
+        1. Extract exact content matches from existing documentation for original_content
+        2. Use appropriate change types:
+           - "replace": When updating existing content
+           - "delete": When removing existing content
+           - "append": When adding content to existing file
+           - "new_file": When creating a new documentation file
+        3. For "new_file" type, omit original_content
+        4. For "delete" type, omit suggested_content
+        5. file_path must be exact and match the documentation structure
+
+        OUTPUT FORMAT:
+        <documentation_update>
+            <changes>
+                <change type="[replace|delete|append|new_file]" file_path="[exact_file_path]">
+                    <original_content>[exact_matching_content_from_docs]</original_content>
+                    <suggested_content>[new_content_maintaining_style]</suggested_content>
+                </change>
+                <!-- Additional changes as needed -->
+            </changes>
+        </documentation_update>
+
+        IMPORTANT:
+        - Always validate that original_content exists in the documentation context
+        - Ensure file_path matches the documentation structure
+        - Maintain consistent formatting and style
+        - Each change must be precise and actionable
+        """),
+        ("human", """Convert the following documentation update suggestions into XML format:
+        {input}
+        
+        Remember to:
+        1. Use exact matches for original_content
+        2. Choose appropriate change types
+        3. Follow the XML structure precisely
+        4. Validate against existing documentation context""")
+    ])
+
+    xml_update_chain = create_stuff_documents_chain(
+        llm=llm,
+        prompt=xml_update_prompt,
+    )
     
     async def process_updates(code_changes: str):
         print("\n" + "="*50)
@@ -147,6 +197,13 @@ def build_documentation_update_chain(code_args, doc_args):
             "code_context": code_docs,
             "docs_context": doc_docs
         })
+
+        xml_update_suggestions = await xml_update_chain.ainvoke({
+            "input": update_suggestions,
+            "context": doc_docs
+        })
+        print("\nXML Update Suggestions:")
+        print(xml_update_suggestions)
         print("\nUpdate Suggestions:")
         print(update_suggestions)
         

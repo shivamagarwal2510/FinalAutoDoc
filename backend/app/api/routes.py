@@ -118,7 +118,7 @@ async def get_recent_changes(project: CodeChangesRequest):
             "llm_provider": "anthropic",
             "llm_model": "claude-3-5-sonnet-20241022",
             "retrieval_alpha": 0.9,
-            "retriever_top_k": 5,
+            "retriever_top_k": 3,
             "multi_query_retriever": False,
         }
         
@@ -130,7 +130,7 @@ async def get_recent_changes(project: CodeChangesRequest):
             "index_namespace": "doc"+sanitize_repo_url(project.docs_repo_id),
             "index_name": "docembeddings",
             "retrieval_alpha": 0.9,
-            "retriever_top_k": 5,
+            "retriever_top_k": 3,
             "multi_query_retriever": False,
         }
 

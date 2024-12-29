@@ -45,9 +45,6 @@ class DocumentationChange(BaseModel):
     original_content: Optional[str] = None  # Not needed for "new_file" type
     suggested_content: Optional[str] = None  # Not needed for "delete" type
 
-class DocumentationUpdateSuggestion(BaseModel):
-    id: str
-    changes: List[DocumentationChange]
 
 
 

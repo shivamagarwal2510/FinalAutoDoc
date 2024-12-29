@@ -211,8 +211,6 @@ def build_documentation_update_chain(code_args, doc_args):
         print("Documentation update process completed")
         print("="*50 + "\n")
         
-        return {
-            "update_suggestions": update_suggestions
-        }
+        return xml_update_suggestions
     
     return process_updates

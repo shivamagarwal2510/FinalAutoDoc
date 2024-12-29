@@ -5,6 +5,7 @@ from backend.app.core.chunker import UniversalFileChunker
 from backend.app.core.embedder import build_batch_embedder_from_flags
 from backend.app.core.vector_store import build_vector_store_from_args
 from backend.app.core.documentation_updater import build_documentation_update_chain
+from backend.app.utils.xmlParser import extract_documentation_changes
 import os
 import time
 import re
@@ -117,7 +118,7 @@ async def get_recent_changes(project: CodeChangesRequest):
             "index_name": "codeembeddings",
             "llm_provider": "anthropic",
             "llm_model": "claude-3-5-sonnet-20241022",
-            "retrieval_alpha": 0.9,
+            "retrieval_alpha": 0.5,
             "retriever_top_k": 3,
             "multi_query_retriever": False,
         }
@@ -129,7 +130,7 @@ async def get_recent_changes(project: CodeChangesRequest):
             "vector_store_provider": "pinecone",
             "index_namespace": "doc"+sanitize_repo_url(project.docs_repo_id),
             "index_name": "docembeddings",
-            "retrieval_alpha": 0.9,
+            "retrieval_alpha": 0.5,
             "retriever_top_k": 3,
             "multi_query_retriever": False,
         }
@@ -142,6 +143,9 @@ async def get_recent_changes(project: CodeChangesRequest):
         print("code_changes: ", code_changes)
         # Process the changes and get documentation update suggestions
         update_suggestions = await update_chain(code_changes)
+
+        changes = extract_documentation_changes(update_suggestions)
+        print("changes: ", changes)
         
         return {"suggestions": update_suggestions}
         

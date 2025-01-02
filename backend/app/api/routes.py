@@ -131,7 +131,7 @@ async def get_recent_changes(project: CodeChangesRequest):
             "index_namespace": "doc"+sanitize_repo_url(project.docs_repo_id),
             "index_name": "docembeddings",
             "retrieval_alpha": 0.5,
-            "retriever_top_k": 3,
+            "retriever_top_k": 5,
             "multi_query_retriever": False,
         }
 
@@ -146,18 +146,36 @@ async def get_recent_changes(project: CodeChangesRequest):
 
         changes = extract_documentation_changes(update_suggestions)
         print("changes: ", changes)
+
+        # repo_manager = GitHubRepoManager(repo_id=project.docs_repo_id, access_token="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")
+        # repo_manager.create_documentation_pr(changes)
+
+        # create a new pr using update_docs endpoint
+        update_docs_response = await update_docs(DocumentationUpdate(docs_repo_id=project.docs_repo_id, changes=changes))
+        print("update_docs_response: ", update_docs_response)
         
-        return {"suggestions": update_suggestions}
+        return {"suggestions": changes}
         
     except Exception as e:
         print(f"Error in get_recent_changes: {str(e)}")  # Add logging
         raise HTTPException(status_code=500, detail=str(e))
 
-@router.post("/update-documentation")
-async def update_documentation(update: DocumentationUpdate):
-    """Create PR with documentation updates"""
+# update the documentation
+@router.post("/update_docs")
+async def update_docs(project: DocumentationUpdate):
     try:
-
-        return {"pr_url"}
+        print("update_docs: project: ", project)
+        print("update_docs: changes: ", project.changes)
+        base_dir = os.path.join(os.getcwd(), "extractedRepos")
+        
+        # Create repo-specific directory
+        repo_name = project.docs_repo_id.split('/')[0]  # Get 'shadcn-ui' from 'shadcn-ui/ui'
+        repo_dir = os.path.join(base_dir, repo_name.replace('-', '_'))  # shadcn_ui
+        local_dir = os.path.join(repo_dir, project.docs_repo_id.split('/')[1] + "documentation")
+        repo_manager = GitHubRepoManager(repo_id=project.docs_repo_id, local_dir=local_dir, access_token="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")
+        repo_manager.create_documentation_pr(project.changes)
+        return {"message": "Documentation updated successfully"}
     except Exception as e:
-        raise HTTPException(status_code=500, detail=str(e)) 
+        print(e)
+        raise HTTPException(status_code=400, detail=str(e))
+

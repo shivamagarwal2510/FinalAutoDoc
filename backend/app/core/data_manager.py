@@ -4,11 +4,12 @@ import logging
 import os
 from abc import abstractmethod
 from functools import cached_property
-from typing import Any, Dict, Generator, Tuple
+from typing import Any, Dict, Generator, Tuple, List
 import subprocess
-
+import time
 import requests
 from git import GitCommandError, Repo
+from backend.app.models.schemas import DocumentationChange
 
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger()
@@ -354,3 +355,162 @@ class GitHubRepoManager(DataManager):
                 "For private repositories, please set the GITHUB_TOKEN variable in your environment."
             )
         return repo_manager
+
+    def create_documentation_pr(self, changes: List[DocumentationChange], branch_prefix: str = "docs-update") -> str:
+        """
+        Creates a pull request with documentation changes.
+        
+        Args:
+            changes: List of DocumentationChange objects containing change_type, file_path, 
+                    original_content, and suggested_content
+            branch_prefix: Prefix for the new branch name
+            
+        Returns:
+            str: URL of the created pull request
+        """
+        print("create_documentation_pr")
+        try:
+            # Create a new branch
+            branch_name = f"{branch_prefix}-{int(time.time())}"
+            repo = Repo(self.local_path)
+            
+            # First, fetch and checkout the default branch
+            origin = repo.remote('origin')
+
+            origin.fetch()
+            repo.git.checkout(self.default_branch)
+            # discard all the local changes
+            repo.git.reset('--hard', 'HEAD')
+            # take a pull from the default branch
+            repo.git.pull()
+            
+            # Create and checkout new branch from default branch
+            current = repo.create_head(branch_name)
+            current.checkout()
+            print("checkout to the new branch", branch_name)
+            # Apply changes to files
+            modified_files = []
+            for change in changes:
+                # remove self.repo_id from the file_path
+                clean_file_path = change.file_path.replace(self.repo_id+'/', "").replace("\\", "/")
+                print("clean_file_path: ", clean_file_path)
+                print("self.local_path: ", self.local_path)
+                #  replace 
+                file_path = os.path.join(self.local_path, clean_file_path)
+                
+                print("file_path: ", file_path)
+                if change.change_type == "delete":
+                    # type "delete" means delete the original_content from that file if present.
+                    if os.path.exists(file_path):
+                        with open(file_path, 'r') as f:
+                            current_content = f.read()
+                        if change.original_content in current_content:
+                            updated_content = current_content.replace(
+                                change.original_content,
+                                ""
+                            )
+                            modified_files.append(f"Deleted content from {change.file_path}")
+                        else:
+                            logging.warning(
+                                f"Original content not found in {change.file_path}. "
+                                "Skipping deletion."
+                            )
+                            continue
+
+                # For new files, create the directory if it doesn't exist
+                if change.change_type == "new_file":
+                    os.makedirs(os.path.dirname(file_path), exist_ok=True)
+                    with open(file_path, 'w') as f:
+                        f.write(change.suggested_content)
+                    repo.index.add([clean_file_path])
+                    modified_files.append(f"Created {change.file_path}")
+                    continue
+
+                # For replace and append operations
+                if os.path.exists(file_path):
+                    with open(file_path, 'r') as f:
+                        current_content = f.read()
+
+                    if change.change_type == "replace":
+                        print("replacing......................................................")
+                        print("change.original_content: ", change.original_content)
+                        print("current_content: ", current_content)
+                        if change.original_content in current_content:
+                            updated_content = current_content.replace(
+                                change.original_content, 
+                                change.suggested_content
+                            )
+                            modified_files.append(f"Updated {file_path}")
+                        else:
+                            logging.warning(
+                                f"Original content not found in {file_path}. "
+                                "Skipping replacement."
+                            )
+                            continue
+                    elif change.change_type == "append":
+                        #  change_type "append means we need to append the suggested_content just after the original_content string in current_content"
+                        print("appeding the changes to the file: ", file_path)
+                        if change.original_content and change.original_content in current_content:
+                            updated_content = current_content.replace(
+                                change.original_content,
+                                change.original_content + change.suggested_content
+                            )
+                            modified_files.append(f"Appended {file_path}")
+                            print("changes appended to the file: ", file_path)
+                        else:
+                            logging.warning(
+                                f"Original content not found in {file_path}. "
+                                "Skipping append."
+                            )
+                            continue
+
+                    with open(file_path, 'w') as f:
+                        f.write(updated_content)
+                    repo.index.add([clean_file_path])
+
+            if not modified_files:
+                return None
+            print("modified_files: ", modified_files)
+            # Commit changes
+            commit_message = "Update documentation based on recent code changes\n\n" + \
+                            "\n".join(modified_files)
+            repo.index.commit(commit_message)
+            
+            # Push changes
+            origin = repo.remote('origin')
+            origin.push(branch_name)
+            print("pushed the changes to the new branch", branch_name)
+
+            # Create PR using GitHub API
+            headers = {
+                "Authorization": f"token {self.access_token}",
+                "Accept": "application/vnd.github.v3+json"
+            }
+            
+            pr_data = {
+                "title": "Documentation Updates",
+                "body": "Automated documentation updates based on recent code changes:\n\n" + 
+                       "\n".join(modified_files),
+                "head": branch_name,
+                "base": self.default_branch,
+                "maintainer_can_modify":True,
+                "draft": False
+            }
+            
+            response = requests.post(
+                f"https://api.github.com/repos/{self.repo_id}/pulls",
+                headers=headers,
+                json=pr_data
+            )
+            
+            if response.status_code != 201:
+                raise GitCommandError(
+                    f"create_pr", 
+                    f"Failed to create PR: {response.json().get('message', 'Unknown error')}"
+                )
+                
+            return response.json()["html_url"]
+
+        except Exception as e:
+            logging.error(f"Error creating PR: {str(e)}")
+            raise

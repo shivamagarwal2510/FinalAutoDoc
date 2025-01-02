@@ -187,7 +187,7 @@ def build_documentation_update_chain(code_args, doc_args):
         
         # Step 3: Get relevant documentation
         print("\n📖 Finding relevant documentation...")
-        doc_docs = await doc_retriever.aget_relevant_documents(final_formatted_code)
+        doc_docs = await doc_retriever.aget_relevant_documents(code_changes)
         print(f"Found {len(doc_docs)} relevant documentation sections:", doc_docs)
        
         # Step 5: Generate documentation update suggestions

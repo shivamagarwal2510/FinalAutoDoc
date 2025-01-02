@@ -32,18 +32,15 @@ class DocChunk(BaseModel):
     embedding: Optional[List[float]] = None
     related_code_chunks: List[str] = []
 
-class DocumentationUpdate(BaseModel):
-    file_path: str
-    original_content: str
-    updated_content: str
-    related_code_changes: Dict
-    timestamp: datetime = datetime.now()
-
 class DocumentationChange(BaseModel):
     change_type: str  # "replace", "delete", "append", "new_file"
     file_path: str
     original_content: Optional[str] = None  # Not needed for "new_file" type
     suggested_content: Optional[str] = None  # Not needed for "delete" type
+
+class DocumentationUpdate(BaseModel):
+    docs_repo_id: str
+    changes: List[DocumentationChange]
 
 
 

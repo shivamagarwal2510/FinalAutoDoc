@@ -120,11 +120,12 @@ def build_documentation_update_chain(code_args, doc_args):
         2. Use appropriate change types:
            - "replace": When updating existing content
            - "delete": When removing existing content
-           - "append": When adding content to existing file
+           - "append": When adding content to the beginning of an existing file
            - "new_file": When creating a new documentation file
         3. For "new_file" type, omit original_content
         4. For "delete" type, omit suggested_content
-        5. file_path must be exact and match the documentation structure
+        5. For "append" type, omit original_content as content will be added at the start of file
+        6. file_path must be exact and match the documentation structure
 
         OUTPUT FORMAT:
         <documentation_update>
@@ -142,6 +143,8 @@ def build_documentation_update_chain(code_args, doc_args):
         - Ensure file_path matches the documentation structure
         - Maintain consistent formatting and style
         - Each change must be precise and actionable
+        - For append type changes, content will be inserted at the beginning of the file
+        - For replace type changes, suggested_content must include both the original_content and the new content
         """),
         ("human", """Convert the following documentation update suggestions into XML format:
         {input}

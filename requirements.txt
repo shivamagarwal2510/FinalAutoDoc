@@ -30,3 +30,4 @@ langchain-anthropic
 pinecone-text
 qdrant-client
 gradio
+pymongo

@@ -6,12 +6,17 @@ from backend.app.core.embedder import build_batch_embedder_from_flags
 from backend.app.core.vector_store import build_vector_store_from_args
 from backend.app.core.documentation_updater import build_documentation_update_chain
 from backend.app.utils.xmlParser import extract_documentation_changes
+from backend.app.core.mongodb import MongoDB
 import os
 import time
 import re
 
 
 router = APIRouter()
+
+# Initialize MongoDB with your connection string
+mongodb = MongoDB()
+
 def sanitize_repo_url(repo_url: str) -> str:
     # Use regex to remove all non-alphabetic characters and convert to lowercase
     sanitized_url = re.sub(r'[^a-zA-Z]', '', repo_url).lower()
@@ -21,6 +26,13 @@ def sanitize_repo_url(repo_url: str) -> str:
 async def setup_project(project: ProjectSetup):
     """Initialize project repositories and setup monitoring"""
     try:
+        # Store project mapping in MongoDB
+        mongodb.create_project(
+            code_repo_id=project.code_repo.url,
+            docs_repo_id=project.docs_repo.url,
+            docs_folder_path=project.docs_repo.folder_path
+        )
+
         # Create base directory for repositories
         base_dir = os.path.join(os.getcwd(), "extractedRepos")
         
@@ -107,6 +119,17 @@ async def setup_project(project: ProjectSetup):
 async def get_recent_changes(project: CodeChangesRequest):
     """Get recent code changes and their impact on documentation"""
     try:
+        # Get project details from MongoDB
+        project_details = mongodb.get_project_by_code_repo(project.code_repo_id)
+        if not project_details:
+            raise HTTPException(
+                status_code=404, 
+                detail="Project not found"
+            )
+
+        # Update project with MongoDB data
+        project.docs_repo_id = project_details["docs_repo_id"]
+
         print("changes route: project: ", project)
         # Reuse the same arguments from setup
         code_args = {

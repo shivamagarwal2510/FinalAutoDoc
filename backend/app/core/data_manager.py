@@ -351,7 +351,7 @@ class GitHubRepoManager(DataManager):
         success = repo_manager.download()
         if not success:
             raise ValueError(
-                f"Unable to clone {args["repo_id"]}. Please check that it exists and you have access to it. "
+                f"Unable to clone. Please check that it exists and you have access to it. "
                 "For private repositories, please set the GITHUB_TOKEN variable in your environment."
             )
         return repo_manager

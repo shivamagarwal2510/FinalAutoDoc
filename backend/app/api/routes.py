@@ -163,6 +163,7 @@ async def get_recent_changes(project: CodeChangesRequest):
         print("update_chain: ", update_chain)
         # Get recent changes from the code repository
         code_changes = project.diffs # You'll need to implement this to get recent git changes
+        code_changes = code_changes.replace("\\n", "\n").strip()
         print("code_changes: ", code_changes)
         # Process the changes and get documentation update suggestions
         update_suggestions = await update_chain(code_changes)

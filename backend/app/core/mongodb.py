@@ -1,9 +1,6 @@
 from pymongo import MongoClient
 from typing import Optional, Dict, Any
 import os
-from dotenv import load_dotenv
-
-load_dotenv()
 
 class MongoDB:
     def __init__(self):

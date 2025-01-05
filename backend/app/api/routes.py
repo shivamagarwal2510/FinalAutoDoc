@@ -128,7 +128,7 @@ async def get_recent_changes(project: CodeChangesRequest):
             )
 
         # Update project with MongoDB data
-        project.docs_repo_id = project_details["docs_repo_id"]
+        docs_repo_id = project_details["docs_repo_id"]
 
         print("changes route: project: ", project)
         # Reuse the same arguments from setup
@@ -147,11 +147,11 @@ async def get_recent_changes(project: CodeChangesRequest):
         }
         
         doc_args = {
-            "repo_id": project.docs_repo_id,
+            "repo_id": docs_repo_id,
             "embedding_provider": "openai",
             "embedding_model": "text-embedding-3-large",
             "vector_store_provider": "pinecone",
-            "index_namespace": "doc"+sanitize_repo_url(project.docs_repo_id),
+            "index_namespace": "doc"+sanitize_repo_url(docs_repo_id),
             "index_name": "docembeddings",
             "retrieval_alpha": 0.5,
             "retriever_top_k": 5,
@@ -175,7 +175,7 @@ async def get_recent_changes(project: CodeChangesRequest):
         # repo_manager.create_documentation_pr(changes)
 
         # create a new pr using update_docs endpoint
-        update_docs_response = await update_docs(DocumentationUpdate(docs_repo_id=project.docs_repo_id, changes=changes))
+        update_docs_response = await update_docs(DocumentationUpdate(docs_repo_id=docs_repo_id, changes=changes))
         print("update_docs_response: ", update_docs_response)
         
         return {"suggestions": changes}

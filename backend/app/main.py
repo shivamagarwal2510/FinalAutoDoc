@@ -14,6 +14,7 @@ app = FastAPI()
 
 app.include_router(router)
 
-# if __name__ == "__main__":
-
-#     uvicorn.run(app, host="0.0.0.0", port=10000, reload=True) 
+if __name__ == "__main__":
+    port = int(os.getenv("PORT", 10000))  # Default to 10000 as per Render's default
+    print(f"Starting server on port {port}")
+    uvicorn.run(app, host="0.0.0.0", port=port) 

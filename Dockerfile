@@ -1,4 +1,4 @@
-FROM python:3.9-slim-bullseye
+FROM python:3.12-slim
 
 # 1. Install system dependencies (including a C compiler)
 RUN apt-get update \

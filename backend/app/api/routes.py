@@ -22,6 +22,11 @@ def sanitize_repo_url(repo_url: str) -> str:
     sanitized_url = re.sub(r'[^a-zA-Z]', '', repo_url).lower()
     return sanitized_url
 
+@router.get("/health")
+async def health():
+    print("health route")
+    return {"status": "ok"}
+
 @router.post("/setup")
 async def setup_project(project: ProjectSetup):
     """Initialize project repositories and setup monitoring"""

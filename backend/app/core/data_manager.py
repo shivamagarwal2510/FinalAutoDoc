@@ -361,7 +361,7 @@ class GitHubRepoManager(DataManager):
         Creates a pull request with documentation changes.
         
         Args:
-            changes: List of DocumentationChange objects containing change_type, file_path, 
+            changes: List[DocumentationChange] objects containing change_type, file_path, 
                     original_content, and suggested_content
             branch_prefix: Prefix for the new branch name
             
@@ -369,6 +369,7 @@ class GitHubRepoManager(DataManager):
             str: URL of the created pull request
         """
         print("create_documentation_pr")
+        
         try:
             # Create a new branch
             branch_name = f"{branch_prefix}-{int(time.time())}"
@@ -387,67 +388,130 @@ class GitHubRepoManager(DataManager):
             print("Checked out to the new branch", branch_name)
             
             modified_files = []
+            # Group changes by file to process them together
+            changes_by_file = {}
             for change in changes:
-                clean_file_path = change.file_path.replace(self.repo_id + '/', "").replace("\\", "/")
-                file_path = os.path.join(self.local_path, clean_file_path)
+                if change.file_path not in changes_by_file:
+                    changes_by_file[change.file_path] = []
+                changes_by_file[change.file_path].append(change)
+            
+            for file_path, file_changes in changes_by_file.items():
+                clean_file_path = file_path.replace(self.repo_id + '/', "").replace("\\", "/")
+                abs_file_path = os.path.join(self.local_path, clean_file_path)
                 
-                if change.change_type == "delete":
-                    if os.path.exists(file_path):
-                        with open(file_path, 'r', newline='') as f:
-                            lines = f.readlines()
-                        with open(file_path, 'w', newline='') as f:
-                            for line in lines:
-                                if change.original_content not in line:
-                                    f.write(line)
-                        modified_files.append(f"Deleted content from {change.file_path}")
-                    else:
-                        logging.warning(f"File {change.file_path} does not exist. Skipping deletion.")
-                    continue
-
-                if change.change_type == "new_file":
-                    os.makedirs(os.path.dirname(file_path), exist_ok=True)
-                    with open(file_path, 'w', newline='') as f:
-                        f.write(change.suggested_content)
+                # Handle new file creation
+                if any(change.change_type == "new_file" for change in file_changes):
+                    new_file_change = next(change for change in file_changes if change.change_type == "new_file")
+                    os.makedirs(os.path.dirname(abs_file_path), exist_ok=True)
+                    with open(abs_file_path, 'wb') as f:
+                        # Write in binary mode to preserve exact content
+                        f.write(new_file_change.suggested_content.encode('utf-8'))
                     repo.index.add([clean_file_path])
-                    modified_files.append(f"Created {change.file_path}")
+                    modified_files.append(f"Created {file_path}")
                     continue
-
-                if os.path.exists(file_path):
-                    # Read file content preserving exact format
-                    with open(file_path, 'r', encoding='utf-8') as f:
-                        content = f.read()
+                
+                # Handle existing files
+                if os.path.exists(abs_file_path):
+                    # Read file content in binary mode to preserve exact format
+                    with open(abs_file_path, 'rb') as f:
+                        file_content_bytes = f.read()
                     
-                    if change.change_type == "replace":
-                        # Only replace the specific content without changing other parts
-                        if change.original_content in content:
-                            new_content = content.replace(change.original_content, change.suggested_content)
-                            with open(file_path, 'w', encoding='utf-8') as f:
-                                f.write(new_content)
-                            modified_files.append(f"Updated {file_path}")
-                        else:
-                            logging.warning(f"Original content not found in {file_path}. Skipping replacement.")
-                            continue
-
-                    elif change.change_type == "append":
-                        # Find the position where we want to append and insert content there
-                        if change.original_content in content:
-                            position = content.find(change.original_content) + len(change.original_content)
-                            new_content = content[:position] + change.suggested_content + content[position:]
-                            with open(file_path, 'w', encoding='utf-8') as f:
-                                f.write(new_content)
-                            modified_files.append(f"Appended to {file_path}")
-                        else:
-                            logging.warning(f"Append point not found in {file_path}. Skipping append.")
-                            continue
-                    else:
-                        logging.warning(f"Unknown change type {change.change_type} for {file_path}. Skipping.")
-                        continue
-
-                    repo.index.add([clean_file_path])
+                    try:
+                        file_content = file_content_bytes.decode('utf-8')
+                    except UnicodeDecodeError:
+                        # If UTF-8 decoding fails, try with error replacement
+                        file_content = file_content_bytes.decode('utf-8', errors='replace')
+                    
+                    # Process the changes one by one
+                    changes_made = False
+                    
+                    # Sort changes to process replacements first
+                    for change in sorted(file_changes, key=lambda c: 0 if c.change_type == "replace" else 1):
+                        if change.change_type == "delete":
+                            # For delete operations, handle character-by-character to preserve line endings
+                            if change.original_content in file_content:
+                                # Carefully preserve exact format during deletion
+                                start_pos = file_content.find(change.original_content)
+                                end_pos = start_pos + len(change.original_content)
+                                file_content = file_content[:start_pos] + file_content[end_pos:]
+                                changes_made = True
+                                modified_files.append(f"Deleted content from {file_path}")
+                            else:
+                                logging.warning(f"Original content not found in {file_path} for deletion. Skipping.")
+                        
+                        elif change.change_type == "replace":
+                            # Process replacement with careful handling of line endings
+                            if change.original_content in file_content:
+                                # Get exact bytes for original and replacement to preserve format
+                                original_bytes = change.original_content.encode('utf-8')
+                                suggested_bytes = change.suggested_content.encode('utf-8')
+                                
+                                # Find exact position in original content
+                                start_pos = file_content.find(change.original_content)
+                                end_pos = start_pos + len(change.original_content)
+                                
+                                # Perform the replacement preserving exact context
+                                file_content = file_content[:start_pos] + change.suggested_content + file_content[end_pos:]
+                                changes_made = True
+                                modified_files.append(f"Updated {file_path}")
+                            else:
+                                # Try a more precise line-by-line matching approach
+                                original_lines = change.original_content.splitlines()
+                                file_lines = file_content.splitlines()
+                                
+                                # Search for an exact match of all lines together
+                                found_match = False
+                                
+                                for i in range(len(file_lines) - len(original_lines) + 1):
+                                    match = True
+                                    for j, original_line in enumerate(original_lines):
+                                        # Compare stripped lines to handle whitespace differences
+                                        if original_line.strip() != file_lines[i + j].strip():
+                                            match = False
+                                            break
+                                    
+                                    if match:
+                                        # Keep the original line endings by preserving the file structure
+                                        # but replace the actual content
+                                        suggested_lines = change.suggested_content.splitlines()
+                                        
+                                        # Reconstruct the file content with the replacement
+                                        new_lines = file_lines[:i] + suggested_lines + file_lines[i + len(original_lines):]
+                                        
+                                        # Detect the line ending style used in the file
+                                        line_ending = '\n'  # Default to Unix-style
+                                        if '\r\n' in file_content:
+                                            line_ending = '\r\n'  # Windows-style
+                                        
+                                        # Join with the detected line ending
+                                        file_content = line_ending.join(new_lines)
+                                        
+                                        changes_made = True
+                                        found_match = True
+                                        modified_files.append(f"Updated {file_path} (line-by-line)")
+                                        break
+                                
+                                if not found_match:
+                                    logging.warning(f"Original content not found in {file_path} for replacement. Skipping.")
+                        
+                        elif change.change_type == "append":
+                            # For append operations, precisely locate the append point
+                            if change.original_content in file_content:
+                                position = file_content.find(change.original_content) + len(change.original_content)
+                                file_content = file_content[:position] + change.suggested_content + file_content[position:]
+                                changes_made = True
+                                modified_files.append(f"Appended to {file_path}")
+                            else:
+                                logging.warning(f"Append point not found in {file_path}. Skipping.")
+                    
+                    if changes_made:
+                        # Write the updated content back to the file in binary mode to preserve format
+                        with open(abs_file_path, 'wb') as f:
+                            f.write(file_content.encode('utf-8'))
+                        repo.index.add([clean_file_path])
                 else:
-                    logging.warning(f"File {file_path} does not exist. Skipping {change.change_type} operation.")
-                    continue
-
+                    logging.warning(f"File {file_path} does not exist. Skipping changes.")
+            
             if not modified_files:
                 return None
             

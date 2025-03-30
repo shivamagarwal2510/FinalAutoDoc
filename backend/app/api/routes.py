@@ -145,7 +145,7 @@ async def get_recent_changes(project: CodeChangesRequest):
             "index_namespace": "code"+sanitize_repo_url(project.code_repo_id),
             "index_name": "codeembeddings",
             "llm_provider": "anthropic",
-            "llm_model": "claude-3-5-sonnet-20241022",
+            "llm_model": "claude-3-7-sonnet-20250219",
             "retrieval_alpha": 0.5,
             "retriever_top_k": 3,
             "multi_query_retriever": False,
@@ -159,7 +159,7 @@ async def get_recent_changes(project: CodeChangesRequest):
             "index_namespace": "doc"+sanitize_repo_url(docs_repo_id),
             "index_name": "docembeddings",
             "retrieval_alpha": 0.5,
-            "retriever_top_k": 5,
+            "retriever_top_k": 10,
             "multi_query_retriever": False,
         }
 

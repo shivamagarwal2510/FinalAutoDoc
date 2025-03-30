@@ -83,9 +83,10 @@ def build_documentation_update_chain(code_args, doc_args):
         - Documentation Structure: [how information is organized]
 
         Required Updates:
-        1. Location: [exact file path and section identifier]
-           Current Text: [text to be updated]
-           Suggested Update: [new text that matches existing style]
+        1. Location: [exact file path]
+           Update Type: ["replace", "delete", or "new_file"]
+           Original Content: [ONLY for "replace" and "delete" - exact content to be replaced or deleted]
+           Suggested Content: [ONLY for "replace" and "new_file" - new content that matches existing style]
            Reason: [specific justification for this update]
 
         2. [Additional updates if needed, following same format]        ```
@@ -116,16 +117,17 @@ def build_documentation_update_chain(code_args, doc_args):
         {context}
 
         RULES FOR XML CONVERSION:
-        1. Extract exact content matches from existing documentation for original_content
-        2. Use appropriate change types:
+        1. Handle exactly three types of changes:
            - "replace": When updating existing content
            - "delete": When removing existing content
-           - "append": When adding content to the beginning of an existing file
            - "new_file": When creating a new documentation file
-        3. For "new_file" type, omit original_content
-        4. For "delete" type, omit suggested_content
-        5. For "append" type, omit original_content as content will be added at the start of file
-        6. file_path must be exact and match the documentation structure
+
+        2. Required elements for each change type:
+           - "replace": Must include both original_content (exact match from docs) and suggested_content
+           - "delete": Must include original_content (exact match from docs), omit suggested_content
+           - "new_file": Must include suggested_content, omit original_content
+
+        3. file_path must be exact and match the documentation structure
 
         OUTPUT FORMAT:
         <documentation_update>
@@ -139,21 +141,21 @@ def build_documentation_update_chain(code_args, doc_args):
         </documentation_update>
 
         IMPORTANT:
-        - Always validate that original_content exists in the documentation context
-        - Ensure file_path matches the documentation structure
-        - Maintain consistent formatting and style
-        - Each change must be precise and actionable
-        - For append type changes, content will be inserted at the beginning of the file
-        - For replace type changes, suggested_content must include both the original_content and the new content
+        - For "replace" and "delete" changes: ALWAYS include original_content with an exact match from the documentation
+        - For "replace" changes: suggested_content should be the complete new content (not just the changes)
+        - For "new_file" changes: only include suggested_content (omit original_content)
+        - For "delete" changes: only include original_content (omit suggested_content)
+        - Never return None or empty values for required elements
+        - Always validate original_content exists in the documentation context
         """),
         ("human", """Convert the following documentation update suggestions into XML format:
         {input}
         
         Remember to:
-        1. Use exact matches for original_content
-        2. Choose appropriate change types
+        1. Use exact matches for original_content in "replace" and "delete" changes
+        2. Include all required elements for each change type
         3. Follow the XML structure precisely
-        4. Validate against existing documentation context""")
+        4. Validate that original_content exists in the documentation context""")
     ])
 
     xml_update_chain = create_stuff_documents_chain(

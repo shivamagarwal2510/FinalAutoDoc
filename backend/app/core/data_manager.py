@@ -413,24 +413,32 @@ class GitHubRepoManager(DataManager):
                     continue
 
                 if os.path.exists(file_path):
-                    with open(file_path, 'r', newline='') as f:
-                        lines = f.readlines()
-
+                    # Read file content preserving exact format
+                    with open(file_path, 'r', encoding='utf-8') as f:
+                        content = f.read()
+                    
                     if change.change_type == "replace":
-                        with open(file_path, 'w', newline='') as f:
-                            for line in lines:
-                                if change.original_content in line:
-                                    line = line.replace(change.original_content, change.suggested_content)
-                                f.write(line)
-                        modified_files.append(f"Updated {file_path}")
+                        # Only replace the specific content without changing other parts
+                        if change.original_content in content:
+                            new_content = content.replace(change.original_content, change.suggested_content)
+                            with open(file_path, 'w', encoding='utf-8') as f:
+                                f.write(new_content)
+                            modified_files.append(f"Updated {file_path}")
+                        else:
+                            logging.warning(f"Original content not found in {file_path}. Skipping replacement.")
+                            continue
 
                     elif change.change_type == "append":
-                        with open(file_path, 'w', newline='') as f:
-                            for line in lines:
-                                f.write(line)
-                                if change.original_content in line:
-                                    f.write(change.suggested_content + '\n')
-                        modified_files.append(f"Appended to {file_path}")
+                        # Find the position where we want to append and insert content there
+                        if change.original_content in content:
+                            position = content.find(change.original_content) + len(change.original_content)
+                            new_content = content[:position] + change.suggested_content + content[position:]
+                            with open(file_path, 'w', encoding='utf-8') as f:
+                                f.write(new_content)
+                            modified_files.append(f"Appended to {file_path}")
+                        else:
+                            logging.warning(f"Append point not found in {file_path}. Skipping append.")
+                            continue
                     else:
                         logging.warning(f"Unknown change type {change.change_type} for {file_path}. Skipping.")
                         continue

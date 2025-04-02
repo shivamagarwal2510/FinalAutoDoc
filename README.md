@@ -54,7 +54,7 @@ streamlit run frontend/app.py
    - Monitor for changes
    - Create documentation updates automatically
 
-3. Add Github App in your Github to track if any Pull request is created on the repository.
+3. Add [Github App](https://github.com/ipriyanshi1708/AutoDocGithubApp) in your Github to track if any Pull request is created on the repository.
    
 4. As soon as Pull Request is merged on the Codebase repository the github app will track the changes and analyze them to generate the documentation updates accordingly and finally creates a Pull Request on the Documentation repository mapped to the codebase repository.
 
@@ -77,5 +77,5 @@ The system consists of several key components:
 ---
 
 <div align="center">
-Made with ❤️ by Shivam Agarwal & Priyanshi Agarwal
+Made with ❤️ by <a href="https://github.com/shivamagarwal2510">Shivam Agarwal</a> & <a href="https://github.com/ipriyanshi1708">Priyanshi Agarwal</a>
 </div>

@@ -1,12 +1,5 @@
 # AI-Powered Documentation Updater
 
-<div align="center">
-
-![License](https://img.shields.io/badge/license-MIT-blue.svg)
-![Python](https://img.shields.io/badge/python-3.8+-blue.svg)
-![Status](https://img.shields.io/badge/status-beta-orange.svg)
-
-</div>
 
 ## 📝 Overview
 
@@ -26,96 +19,63 @@ The AI-Powered Documentation Updater is an intelligent tool that automates the p
 ### Prerequisites
 
 - Python 3.8 or higher
-- GitHub account with repository access
 - OpenAI API key (for AI model integration)
-
-### Installation
-
-1. Clone the repository:
-```bash
-git clone https://github.com/yourusername/ai-doc-updater.git
-cd ai-doc-updater
-```
-
-2. Install dependencies:
-```bash
-pip install -r requirements.txt
-```
-
-3. Set up environment variables:
-```bash
-cp .env.example .env
-# Edit .env with your configuration
-```
+- PINECONE API Key
+- ANTHROPIC API Key
+- MONGODB CONNECTION STRING
+- Setup AutoDocGithub App and setup it.
 
 ### Configuration
 
-1. Set up your GitHub credentials:
-   - Generate a GitHub Personal Access Token
-   - Add it to your `.env` file
+1. Set up your environment variables.
+2. Install dependencies using command:
+```bash
+pip install -r requirements.txt
+```
+3. Run the backend using command:
+```bash
+uvicorn backend.app.main:app --reload --host 0.0.0.0 --port 8000
+```
+4. Run the frontend to generate embeddings using command:
+```bash
+streamlit run frontend/app.py
+```
 
-2. Configure OpenAI API:
-   - Get your API key from OpenAI
-   - Add it to your `.env` file
 
 ## 💻 Usage
 
-1. Start the application:
-```bash
-python main.py
-```
-
-2. Access the web interface (Streamlit):
+1. Access the web interface (Streamlit):
    - Open your browser and navigate to `http://localhost:8501`
-   - Input your codebase and documentation repository URLs
-   - Configure any additional settings
+   - Input your codebase and documentation repository URLs to generate embeddings
 
-3. The system will:
+2. The system will:
    - Analyze your codebase and documentation
    - Generate embeddings for both
    - Monitor for changes
    - Create documentation updates automatically
 
+3. Add Github App in your Github to track if any Pull request is created on the repository.
+   
+4. As soon as Pull Request is merged on the Codebase repository the github app will track the changes and analyze them to generate the documentation updates accordingly and finally creates a Pull Request on the Documentation repository mapped to the codebase repository.
+
 ## 🏗️ Architecture
 
 The system consists of several key components:
 
-- **Input Module**: Handles repository URLs and authentication
+- **Input Module**: Handles repository URLs
 - **Chunking Engine**: Splits code and documentation into manageable pieces
 - **Embedding Generator**: Creates vector embeddings for AI processing
 - **Change Tracker**: Monitors codebase modifications
 - **Documentation Updater**: Generates and applies documentation updates
 - **Embedding Updater**: Maintains synchronization of embeddings
 
-## 🤝 Contributing
-
-We welcome contributions! Please see our [Contributing Guidelines](CONTRIBUTING.md) for details.
-
-1. Fork the repository
-2. Create your feature branch (`git checkout -b feature/AmazingFeature`)
-3. Commit your changes (`git commit -m 'Add some AmazingFeature'`)
-4. Push to the branch (`git push origin feature/AmazingFeature`)
-5. Open a Pull Request
-
-## 📄 License
-
-This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
-
 ## 🙏 Acknowledgments
 
 - OpenAI for providing the AI models
 - GitHub for repository integration
-- The open-source community for various tools and libraries
-
-## 📞 Support
-
-For support, please:
-- Open an issue in the GitHub repository
-- Contact the maintainers
-- Check the [documentation](docs/) for detailed guides
 
 ---
 
 <div align="center">
-Made with ❤️ by the AI-Powered Documentation Updater Team
+Made with ❤️ by Shivam Agarwal & Priyanshi Agarwal
 </div>

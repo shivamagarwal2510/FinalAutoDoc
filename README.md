@@ -23,7 +23,7 @@ The AI-Powered Documentation Updater is an intelligent tool that automates the p
 - PINECONE API Key
 - ANTHROPIC API Key
 - MONGODB CONNECTION STRING
-- Setup AutoDocGithub App and setup it.
+- Setup [AutoDocGithub App](https://github.com/ipriyanshi1708/AutoDocGithubApp)
 
 ### Configuration
 
@@ -69,7 +69,7 @@ The system consists of several key components:
 - **Documentation Updater**: Generates and applies documentation updates
 - **Embedding Updater**: Maintains synchronization of embeddings
 
-## 🙏 Acknowledgments
+## 🙏 Acknowledgements
 
 - OpenAI for providing the AI models
 - GitHub for repository integration
